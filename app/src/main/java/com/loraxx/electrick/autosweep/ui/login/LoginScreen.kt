@@ -60,6 +60,7 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     onLoginClicked: () -> Unit,
     onForgotPasswordClicked: () -> Unit,
+    onQuickBalanceClicked: () -> Unit,
 ) {
     Scaffold(
         modifier = Modifier.fillMaxSize(),
@@ -101,6 +102,16 @@ fun LoginScreen(
                 onLoginClicked = onLoginClicked,
                 onForgotPasswordClicked = onForgotPasswordClicked,
             )
+            Spacer(modifier = Modifier.height(24.dp))
+
+            TextButton(
+                onClick = onQuickBalanceClicked
+            ) {
+                Text(
+                    stringResource(R.string.button_quick_balance),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
         }
     }
 }
@@ -109,13 +120,13 @@ fun LoginScreen(
 fun LoginHeaderSection(modifier: Modifier = Modifier) {
     Column(modifier = modifier) {
         Text(
-            text = stringResource(R.string.login),
+            text = stringResource(R.string.login_header),
             modifier = Modifier.fillMaxWidth(),
             style = MaterialTheme.typography.displayMedium,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
-            text = stringResource(R.string.sign_in_desc),
+            text = stringResource(R.string.login_sub_header),
             modifier = Modifier.fillMaxWidth(),
             style = MaterialTheme.typography.bodyLarge,
         )
@@ -156,7 +167,7 @@ fun LoginSection(
             onClick = onForgotPasswordClicked
         ) {
             Text(
-                "Forgot Password?",
+                stringResource(R.string.button_forgot_password),
                 style = MaterialTheme.typography.bodySmall,
             )
         }
@@ -171,19 +182,6 @@ fun LoginSection(
                 style = MaterialTheme.typography.labelLarge,
             )
         }
-
-        Spacer(modifier = Modifier.height(24.dp))
-
-        TextButton(
-            onClick = onForgotPasswordClicked
-        ) {
-            Text(
-                stringResource(R.string.quick_balance),
-                style = MaterialTheme.typography.labelLarge,
-            )
-        }
-
-
     }
 }
 
@@ -204,7 +202,7 @@ fun PasswordTextField(modifier: Modifier = Modifier, passwordState: TextFieldSta
         trailingIcon = {
             Icon(
                 if (showPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                contentDescription = "Toggle password visibility",
+                contentDescription = stringResource(R.string.cd_toggle_password_visibility),
                 modifier = Modifier.clickable { showPassword = !showPassword }
             )
         }
@@ -214,7 +212,10 @@ fun PasswordTextField(modifier: Modifier = Modifier, passwordState: TextFieldSta
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun LoginButtonGroup(modifier: Modifier = Modifier) {
-    val options = listOf("Login", "Register")
+    val options = listOf(
+        stringResource(R.string.button_group_login),
+        stringResource(R.string.button_group_register)
+    )
     var selectedIndex by remember { mutableIntStateOf(0) }
 
     Row(
@@ -254,6 +255,7 @@ fun LoginSectionPreview(modifier: Modifier = Modifier) {
             LoginScreen(
                 onLoginClicked = {},
                 onForgotPasswordClicked = {},
+                onQuickBalanceClicked = {},
             )
         }
     }

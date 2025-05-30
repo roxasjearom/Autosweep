@@ -16,8 +16,12 @@ class MainActivity : ComponentActivity() {
                 LoginScreen(
                     onLoginClicked = {
                         //TODO implement login here
-                    }, onForgotPasswordClicked = {
+                    },
+                    onForgotPasswordClicked = {
                         //TODO implement forgot password here
+                    },
+                    onQuickBalanceClicked = {
+                        //TODO implement quick balance here
                     }
                 )
             }
