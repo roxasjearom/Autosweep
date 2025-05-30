@@ -1,3 +1,13 @@
 <resources>
     <string name="app_name">Autosweep 2.0</string>
+    <string name="login_header">Login</string>
+    <string name="login_sub_header">Sign in to your account.</string>
+    <string name="hint_email">Email</string>
+    <string name="hint_password">Password</string>
+    <string name="button_login">Login</string>
+    <string name="button_quick_balance">Quick Balance</string>
+    <string name="button_forgot_password">Forgot Password?</string>
+    <string name="cd_toggle_password_visibility">Toggle password visibility</string>
+    <string name="button_group_login">Login</string>
+    <string name="button_group_register">Register</string>
 </resources>
