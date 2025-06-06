@@ -50,6 +50,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.loraxx.electrick.autosweep.R
@@ -58,6 +59,9 @@ import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 @Composable
 fun LoginScreen(
     modifier: Modifier = Modifier,
+    emailTextFieldState: TextFieldState,
+    emailUiState: EmailUiState,
+    passwordTextFieldState: TextFieldState,
     onLoginClicked: () -> Unit,
     onForgotPasswordClicked: () -> Unit,
     onQuickBalanceClicked: () -> Unit,
@@ -99,6 +103,9 @@ fun LoginScreen(
 
             LoginSection(
                 modifier = Modifier.fillMaxWidth(),
+                emailTextFieldState = emailTextFieldState,
+                emailUiState = emailUiState,
+                passwordTextFieldState = passwordTextFieldState,
                 onLoginClicked = onLoginClicked,
                 onForgotPasswordClicked = onForgotPasswordClicked,
             )
@@ -136,6 +143,9 @@ fun LoginHeaderSection(modifier: Modifier = Modifier) {
 @Composable
 fun LoginSection(
     modifier: Modifier = Modifier,
+    emailTextFieldState: TextFieldState,
+    emailUiState: EmailUiState,
+    passwordTextFieldState: TextFieldState,
     onLoginClicked: () -> Unit,
     onForgotPasswordClicked: () -> Unit,
 ) {
@@ -144,22 +154,17 @@ fun LoginSection(
         horizontalAlignment = Alignment.CenterHorizontally,
 
         ) {
-        val usernameState = rememberTextFieldState()
-        val passwordState = rememberTextFieldState()
 
-        OutlinedTextField(
-            state = usernameState,
+        EmailTextField(
             modifier = Modifier.fillMaxWidth(),
-            lineLimits = TextFieldLineLimits.SingleLine,
-            keyboardOptions = KeyboardOptions(imeAction = ImeAction.Next),
-            placeholder = { Text(stringResource(R.string.hint_email)) },
-            shape = RoundedCornerShape(8.dp),
+            textFieldState = emailTextFieldState,
+            uiState = emailUiState,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
 
         PasswordTextField(
-            passwordState = passwordState,
+            textFieldState = passwordTextFieldState,
             modifier = Modifier.fillMaxWidth(),
         )
         TextButton(
@@ -186,10 +191,41 @@ fun LoginSection(
 }
 
 @Composable
-fun PasswordTextField(modifier: Modifier = Modifier, passwordState: TextFieldState) {
+fun EmailTextField(
+    modifier: Modifier = Modifier,
+    textFieldState: TextFieldState,
+    uiState: EmailUiState,
+) {
+    OutlinedTextField(
+        state = textFieldState,
+        modifier = modifier,
+        lineLimits = TextFieldLineLimits.SingleLine,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Email,
+            imeAction = ImeAction.Next,
+        ),
+        onKeyboardAction = { performDefaultAction ->
+            performDefaultAction()
+        },
+        placeholder = { Text(stringResource(R.string.hint_email)) },
+        shape = RoundedCornerShape(8.dp),
+        isError = uiState.hasError,
+        supportingText = {
+            if (uiState.hasError) {
+                Text(
+                    text = uiState.errorMessage ?: "",
+                    color = MaterialTheme.colorScheme.error,
+                )
+            }
+        }
+    )
+}
+
+@Composable
+fun PasswordTextField(modifier: Modifier = Modifier, textFieldState: TextFieldState) {
     var showPassword by remember { mutableStateOf(false) }
     OutlinedSecureTextField(
-        state = passwordState,
+        state = textFieldState,
         modifier = modifier,
         shape = RoundedCornerShape(8.dp),
         textObfuscationMode =
@@ -253,6 +289,9 @@ fun LoginSectionPreview(modifier: Modifier = Modifier) {
     Autosweep20Theme {
         Surface {
             LoginScreen(
+                emailTextFieldState = rememberTextFieldState(),
+                emailUiState = EmailUiState(),
+                passwordTextFieldState = rememberTextFieldState(),
                 onLoginClicked = {},
                 onForgotPasswordClicked = {},
                 onQuickBalanceClicked = {},
