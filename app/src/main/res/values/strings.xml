@@ -10,4 +10,8 @@
     <string name="cd_toggle_password_visibility">Toggle password visibility</string>
     <string name="button_group_login">Login</string>
     <string name="button_group_register">Register</string>
+    <string name="error_email_empty">Please enter your email</string>
+    <string name="error_email_invalid">Email is invalid</string>
+    <string name="error_password_empty">Please enter your password</string>
+    <string name="error_password_invalid">Incorrect password. Please try again</string>
 </resources>

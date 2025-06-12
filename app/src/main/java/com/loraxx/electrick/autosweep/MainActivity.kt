@@ -18,13 +18,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             Autosweep20Theme {
                 val loginViewModel: LoginViewModel by viewModels()
-                val emailUiState by loginViewModel.emailUiState.collectAsStateWithLifecycle()
+                val emailInputFieldState by loginViewModel.emailInputFieldState.collectAsStateWithLifecycle()
+                val passwordInputFieldState by loginViewModel.passwordInputFieldState.collectAsStateWithLifecycle()
                 LoginScreen(
-                    emailTextFieldState = loginViewModel.emailTextFieldState,
-                    emailUiState = emailUiState,
-                    passwordTextFieldState = loginViewModel.passwordTextFieldState,
-                    onLoginClicked = {
-                        //TODO implement login here
+                    emailInputFieldState = emailInputFieldState,
+                    passwordInputFieldState = passwordInputFieldState,
+                    onLoginClicked = { email, password ->
+                        loginViewModel.validateCredentials(email, password)
                     },
                     onForgotPasswordClicked = {
                         //TODO implement forgot password here
