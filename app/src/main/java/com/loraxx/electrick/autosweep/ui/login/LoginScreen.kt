@@ -1,7 +1,6 @@
 package com.loraxx.electrick.autosweep.ui.login
 
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -12,21 +11,12 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.KeyboardOptions
-import androidx.compose.foundation.text.input.TextFieldLineLimits
-import androidx.compose.foundation.text.input.TextObfuscationMode
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
-import androidx.compose.material.icons.filled.Visibility
-import androidx.compose.material.icons.filled.VisibilityOff
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonGroupDefaults
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.OutlinedSecureTextField
-import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -36,7 +26,6 @@ import androidx.compose.material3.ToggleButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -47,13 +36,10 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.role
 import androidx.compose.ui.semantics.semantics
-import androidx.compose.ui.text.input.ImeAction
-import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
-import com.loraxx.electrick.autosweep.ui.fields.ValidationState
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 
 @Composable
@@ -136,149 +122,6 @@ fun LoginHeaderSection(modifier: Modifier = Modifier) {
             style = MaterialTheme.typography.bodyLarge,
         )
     }
-}
-
-@Composable
-fun LoginSection(
-    modifier: Modifier = Modifier,
-    emailInputFieldState: InputFieldState,
-    passwordInputFieldState: InputFieldState,
-    onLoginClicked: (email: String, password: String) -> Unit,
-    onForgotPasswordClicked: () -> Unit,
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-
-        ) {
-
-        EmailTextField(
-            modifier = Modifier.fillMaxWidth(),
-            emailInputFieldState = emailInputFieldState,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        PasswordTextField(
-            modifier = Modifier.fillMaxWidth(),
-            passwordInputFieldState = passwordInputFieldState,
-            onKeyboardActionClicked = {
-                onLoginClicked(
-                    emailInputFieldState.textFieldState.text.toString(),
-                    passwordInputFieldState.textFieldState.text.toString(),
-                )
-            }
-        )
-        TextButton(
-            modifier = Modifier.align(Alignment.End),
-            onClick = onForgotPasswordClicked
-        ) {
-            Text(
-                stringResource(R.string.button_forgot_password),
-                style = MaterialTheme.typography.bodySmall,
-            )
-        }
-        Spacer(modifier = Modifier.height(36.dp))
-
-        Button(
-            onClick = {
-                onLoginClicked(
-                    emailInputFieldState.textFieldState.text.toString(),
-                    passwordInputFieldState.textFieldState.text.toString(),
-                )
-            },
-            modifier = Modifier.fillMaxWidth()
-        ) {
-            Text(
-                stringResource(R.string.button_login),
-                style = MaterialTheme.typography.labelLarge,
-            )
-        }
-    }
-}
-
-@Composable
-fun EmailTextField(
-    modifier: Modifier = Modifier,
-    emailInputFieldState: InputFieldState,
-) {
-    val hasError = emailInputFieldState.validationState != ValidationState.INITIAL &&
-            emailInputFieldState.validationState != ValidationState.VALID
-
-    OutlinedTextField(
-        state = emailInputFieldState.textFieldState,
-        modifier = modifier,
-        lineLimits = TextFieldLineLimits.SingleLine,
-        keyboardOptions = KeyboardOptions(
-            keyboardType = KeyboardType.Email,
-            imeAction = ImeAction.Next,
-        ),
-        label = { Text(stringResource(R.string.hint_email)) },
-        placeholder = { Text(stringResource(R.string.hint_email)) },
-        shape = RoundedCornerShape(8.dp),
-        isError = hasError,
-        supportingText = {
-            if (hasError) {
-                Text(
-                    text = when (emailInputFieldState.validationState) {
-                        ValidationState.EMPTY -> stringResource(R.string.error_email_empty)
-                        ValidationState.INVALID -> stringResource(R.string.error_email_invalid)
-                        else -> ""
-                    },
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        }
-    )
-}
-
-@Composable
-fun PasswordTextField(
-    modifier: Modifier = Modifier,
-    passwordInputFieldState: InputFieldState,
-    onKeyboardActionClicked: () -> Unit = { },
-) {
-    val hasError = passwordInputFieldState.validationState != ValidationState.INITIAL &&
-            passwordInputFieldState.validationState != ValidationState.VALID
-    var showPassword by remember { mutableStateOf(false) }
-
-    OutlinedSecureTextField(
-        state = passwordInputFieldState.textFieldState,
-        modifier = modifier,
-        shape = RoundedCornerShape(8.dp),
-        textObfuscationMode =
-            if (showPassword) {
-                TextObfuscationMode.Visible
-            } else {
-                TextObfuscationMode.RevealLastTyped
-            },
-        label = { Text(stringResource(R.string.hint_password)) },
-        placeholder = { Text(stringResource(R.string.hint_password)) },
-        trailingIcon = {
-            Icon(
-                if (showPassword) Icons.Filled.Visibility else Icons.Filled.VisibilityOff,
-                contentDescription = stringResource(R.string.cd_toggle_password_visibility),
-                modifier = Modifier.clickable { showPassword = !showPassword }
-            )
-        },
-        isError = hasError,
-        supportingText = {
-            if (hasError) {
-                Text(
-                    text = when (passwordInputFieldState.validationState) {
-                        ValidationState.EMPTY -> stringResource(R.string.error_password_empty)
-                        ValidationState.INVALID -> stringResource(R.string.error_password_invalid)
-                        else -> ""
-                    },
-                    color = MaterialTheme.colorScheme.error,
-                )
-            }
-        },
-        onKeyboardAction = { performDefaultAction ->
-            onKeyboardActionClicked()
-            performDefaultAction()
-        },
-    )
 }
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class)
