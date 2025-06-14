@@ -3,7 +3,6 @@ package com.loraxx.electrick.autosweep.ui.login
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
 import com.loraxx.electrick.autosweep.ui.fields.emailStateValidator
 import com.loraxx.electrick.autosweep.ui.fields.passwordStateValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -21,46 +20,59 @@ import javax.inject.Inject
 @HiltViewModel
 class LoginViewModel @Inject constructor() : ViewModel() {
 
-    private val _emailInputFieldState = MutableStateFlow(InputFieldState())
-    val emailInputFieldState: StateFlow<InputFieldState> = _emailInputFieldState.asStateFlow()
-
-    private val _passwordInputFieldState = MutableStateFlow(InputFieldState())
-    val passwordInputFieldState: StateFlow<InputFieldState> = _passwordInputFieldState.asStateFlow()
+    private val _loginUiState = MutableStateFlow(LoginUiState())
+    val loginUiState: StateFlow<LoginUiState> = _loginUiState.asStateFlow()
 
     init {
         viewModelScope.launch {
-            snapshotFlow { _emailInputFieldState.value.textFieldState.text }
+            snapshotFlow { _loginUiState.value.emailField.textFieldState.text }
                 .debounce(300L)
                 .distinctUntilChanged().collect { email ->
-                    _emailInputFieldState.update { currentState ->
+                    _loginUiState.update { currentState ->
                         currentState.copy(
-                            validationState = emailStateValidator(email.toString(), false),
+                            emailField = currentState.emailField.copy(
+                                validationState = emailStateValidator(email.toString(), false),
+                            )
                         )
                     }
                 }
         }
         viewModelScope.launch {
-            snapshotFlow { _passwordInputFieldState.value.textFieldState.text }
+            snapshotFlow { _loginUiState.value.passwordField.textFieldState.text }
                 .debounce(300L)
                 .distinctUntilChanged().collect { password ->
-                    _passwordInputFieldState.update { currentState ->
+                    _loginUiState.update { currentState ->
                         currentState.copy(
-                            validationState = passwordStateValidator(password.toString(), false),
+                            passwordField = currentState.passwordField.copy(
+                                validationState = passwordStateValidator(password.toString(), false),
+                            )
                         )
                     }
                 }
         }
     }
 
-    fun validateCredentials(email: String, password: String) {
-        _emailInputFieldState.update { currentState ->
+    fun updateSelectedIndex(index: Int) {
+        _loginUiState.update { currentState ->
             currentState.copy(
-                validationState = emailStateValidator(email, true),
+                selectedIndex = index,
             )
         }
-        _passwordInputFieldState.update { currentState ->
+    }
+
+    fun validateCredentials(email: String, password: String) {
+        _loginUiState.update { currentState ->
             currentState.copy(
-                validationState = passwordStateValidator(password, true),
+                emailField = currentState.emailField.copy(
+                    validationState = emailStateValidator(email, true),
+                )
+            )
+        }
+        _loginUiState.update { currentState ->
+            currentState.copy(
+                passwordField = currentState.passwordField.copy(
+                    validationState = passwordStateValidator(password, true),
+                )
             )
         }
     }

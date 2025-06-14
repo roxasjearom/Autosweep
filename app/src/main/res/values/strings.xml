@@ -1,17 +1,31 @@
 <resources>
     <string name="app_name">Autosweep 2.0</string>
+
     <string name="login_header">Login</string>
     <string name="login_sub_header">Sign in to your account.</string>
+    <string name="register_header">Register</string>
+    <string name="register_sub_header">Register your account.</string>
+
     <string name="hint_email">Email</string>
     <string name="hint_password">Password</string>
+    <string name="hint_account_number">RFID Account number</string>
+    <string name="hint_plate_number">Plate number</string>
+
     <string name="button_login">Login</string>
+    <string name="button_register">Register</string>
     <string name="button_quick_balance">Quick Balance</string>
     <string name="button_forgot_password">Forgot Password?</string>
-    <string name="cd_toggle_password_visibility">Toggle password visibility</string>
     <string name="button_group_login">Login</string>
     <string name="button_group_register">Register</string>
+
+    <string name="cd_toggle_password_visibility">Toggle password visibility</string>
+
     <string name="error_email_empty">Please enter your email</string>
     <string name="error_email_invalid">Email is invalid</string>
     <string name="error_password_empty">Please enter your password</string>
     <string name="error_password_invalid">Incorrect password. Please try again</string>
+    <string name="error_account_number_empty">Enter your RFID account number</string>
+    <string name="error_account_number_invalid">Invalid account number</string>
+    <string name="error_plate_number_empty">Enter your plate number</string>
+    <string name="error_plate_number_invalid">Invalid plate number</string>
 </resources>

@@ -41,11 +41,11 @@ fun LoginSection(
     passwordInputFieldState: InputFieldState,
     onLoginClicked: (email: String, password: String) -> Unit,
     onForgotPasswordClicked: () -> Unit,
+    onQuickBalanceClicked: () -> Unit,
 ) {
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-
         ) {
 
         EmailTextField(
@@ -87,6 +87,17 @@ fun LoginSection(
         ) {
             Text(
                 stringResource(R.string.button_login),
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
+
+        TextButton(
+            onClick = onQuickBalanceClicked
+        ) {
+            Text(
+                stringResource(R.string.button_quick_balance),
                 style = MaterialTheme.typography.labelLarge,
             )
         }
