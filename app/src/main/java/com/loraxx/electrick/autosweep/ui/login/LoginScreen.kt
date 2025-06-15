@@ -53,6 +53,8 @@ fun LoginScreen(
     modifier: Modifier = Modifier,
     emailInputFieldState: InputFieldState,
     passwordInputFieldState: InputFieldState,
+    accountNumberInputFieldState: InputFieldState,
+    plateNumberInputFieldState: InputFieldState,
     selectedIndex: Int,
     onLoginClicked: (email: String, password: String) -> Unit,
     onForgotPasswordClicked: () -> Unit,
@@ -145,8 +147,8 @@ fun LoginScreen(
                 } else {
                     RegistrationSection(
                         modifier = Modifier.fillMaxWidth(),
-                        accountNumberInputFieldState = InputFieldState(),
-                        plateNumberInputFieldState = InputFieldState(),
+                        accountNumberInputFieldState = accountNumberInputFieldState,
+                        plateNumberInputFieldState = plateNumberInputFieldState,
                         onRegisterClicked = onRegisterClicked,
                     )
                 }
@@ -217,6 +219,8 @@ fun LoginSectionPreview(modifier: Modifier = Modifier) {
             LoginScreen(
                 emailInputFieldState = InputFieldState(),
                 passwordInputFieldState = InputFieldState(),
+                accountNumberInputFieldState = InputFieldState(),
+                plateNumberInputFieldState = InputFieldState(),
                 selectedIndex = 0,
                 onLoginClicked = { _, _ -> },
                 onForgotPasswordClicked = {},

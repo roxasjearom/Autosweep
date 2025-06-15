@@ -7,3 +7,8 @@ data class LoginUiState(
     val passwordField: InputFieldState = InputFieldState(),
     val selectedIndex: Int = 0,
 )
+
+data class RegistrationUiState(
+    val accountNumberField: InputFieldState = InputFieldState(),
+    val plateNumberField: InputFieldState = InputFieldState(),
+)

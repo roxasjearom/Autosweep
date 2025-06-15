@@ -6,7 +6,11 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
 import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.allCaps
+import androidx.compose.foundation.text.input.maxLength
+import androidx.compose.foundation.text.input.then
 import androidx.compose.material3.Button
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
@@ -17,11 +21,15 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardCapitalization
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.intl.Locale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.loraxx.electrick.autosweep.R
+import com.loraxx.electrick.autosweep.ui.fields.DigitOnlyInputTransformation
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
+import com.loraxx.electrick.autosweep.ui.fields.NoSpaceInputTransformation
 import com.loraxx.electrick.autosweep.ui.fields.ValidationState
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 
@@ -35,7 +43,7 @@ fun RegistrationSection(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
+    ) {
 
         AccountNumberTextField(
             modifier = Modifier.fillMaxWidth(),
@@ -90,6 +98,9 @@ fun AccountNumberTextField(
             keyboardType = KeyboardType.Number,
             imeAction = ImeAction.Next,
         ),
+        inputTransformation = InputTransformation
+            .maxLength(7)
+            .then(DigitOnlyInputTransformation()),
         label = { Text(stringResource(R.string.hint_account_number)) },
         placeholder = { Text(stringResource(R.string.hint_account_number)) },
         shape = RoundedCornerShape(8.dp),
@@ -124,18 +135,23 @@ fun PlateNumberTextField(
         lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Next,
+            imeAction = ImeAction.Done,
+            capitalization = KeyboardCapitalization.Characters,
         ),
+        inputTransformation = InputTransformation
+            .maxLength(7)
+            .allCaps(Locale.current)
+            .then(NoSpaceInputTransformation()),
         label = { Text(stringResource(R.string.hint_plate_number)) },
-        placeholder = { Text(stringResource(R.string.hint_plate_number)) },
+        placeholder = { Text(stringResource(R.string.hint_format_plate_number)) },
         shape = RoundedCornerShape(8.dp),
         isError = hasError,
         supportingText = {
             if (hasError) {
                 Text(
                     text = when (plateNumberInputFieldState.validationState) {
-                        ValidationState.EMPTY -> stringResource(R.string.error_account_number_empty)
-                        ValidationState.INVALID -> stringResource(R.string.error_account_number_invalid)
+                        ValidationState.EMPTY -> stringResource(R.string.error_plate_number_empty)
+                        ValidationState.INVALID -> stringResource(R.string.error_plate_number_invalid)
                         else -> ""
                     },
                     color = MaterialTheme.colorScheme.error,
