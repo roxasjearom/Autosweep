@@ -28,4 +28,5 @@
     <string name="error_account_number_invalid">Invalid account number</string>
     <string name="error_plate_number_empty">Enter your plate number</string>
     <string name="error_plate_number_invalid">Invalid plate number</string>
+    <string name="hint_format_plate_number">ABC1234</string>
 </resources>
