@@ -30,3 +30,23 @@ val passwordStateValidator: StateValidator = { password, validateIfEmpty ->
         else -> ValidationState.VALID
     }
 }
+
+val accountNumberStateValidator: StateValidator = { accountNumber, validateIfEmpty ->
+    when {
+        accountNumber.isEmpty() && !validateIfEmpty -> ValidationState.INITIAL
+        accountNumber.isEmpty() && validateIfEmpty -> ValidationState.EMPTY
+        !accountNumber.all { it.isDigit() } -> ValidationState.INVALID
+        accountNumber.length in 6..7 -> ValidationState.VALID
+        else -> ValidationState.INVALID
+    }
+}
+
+val plateNumberStateValidator: StateValidator = { plateNumber, validateIfEmpty ->
+    val fourWheelRegex = Regex("^[A-Z]{3}\\d{4}$")
+    when {
+        plateNumber.isEmpty() && !validateIfEmpty -> ValidationState.INITIAL
+        plateNumber.isEmpty() && validateIfEmpty -> ValidationState.EMPTY
+        fourWheelRegex.matches(plateNumber) -> ValidationState.VALID
+        else -> ValidationState.INVALID
+    }
+}

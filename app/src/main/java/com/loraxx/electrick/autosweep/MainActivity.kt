@@ -18,11 +18,13 @@ class MainActivity : ComponentActivity() {
         setContent {
             Autosweep20Theme {
                 val loginViewModel: LoginViewModel by viewModels()
-                val emailInputFieldState by loginViewModel.emailInputFieldState.collectAsStateWithLifecycle()
-                val passwordInputFieldState by loginViewModel.passwordInputFieldState.collectAsStateWithLifecycle()
+                val loginUiState by loginViewModel.loginUiState.collectAsStateWithLifecycle()
+                val registrationUiState by loginViewModel.registrationUiState.collectAsStateWithLifecycle()
                 LoginScreen(
-                    emailInputFieldState = emailInputFieldState,
-                    passwordInputFieldState = passwordInputFieldState,
+                    emailInputFieldState = loginUiState.emailField,
+                    passwordInputFieldState = loginUiState.passwordField,
+                    accountNumberInputFieldState = registrationUiState.accountNumberField,
+                    plateNumberInputFieldState = registrationUiState.plateNumberField,
                     onLoginClicked = { email, password ->
                         loginViewModel.validateCredentials(email, password)
                     },
@@ -31,7 +33,14 @@ class MainActivity : ComponentActivity() {
                     },
                     onQuickBalanceClicked = {
                         //TODO implement quick balance here
-                    }
+                    },
+                    selectedIndex = loginUiState.selectedIndex,
+                    onSelectedIndexChange = {
+                        loginViewModel.updateSelectedIndex(it)
+                    },
+                    onRegisterClicked = { accountNumber, plateNumber ->
+                        loginViewModel.validateRegistration(accountNumber, plateNumber)
+                    },
                 )
             }
         }
