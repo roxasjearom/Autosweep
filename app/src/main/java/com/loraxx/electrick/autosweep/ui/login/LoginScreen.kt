@@ -2,8 +2,7 @@ package com.loraxx.electrick.autosweep.ui.login
 
 import androidx.compose.animation.AnimatedContent
 import androidx.compose.animation.core.FiniteAnimationSpec
-import androidx.compose.animation.core.Spring.DampingRatioMediumBouncy
-import androidx.compose.animation.core.Spring.StiffnessMedium
+import androidx.compose.animation.core.Spring.DampingRatioLowBouncy
 import androidx.compose.animation.core.spring
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
@@ -122,7 +121,7 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(48.dp))
 
             val bounceAnimationSpec: FiniteAnimationSpec<IntOffset> =
-                spring(dampingRatio = DampingRatioMediumBouncy, stiffness = StiffnessMedium)
+                spring(dampingRatio = DampingRatioLowBouncy, stiffness = 800f)
             AnimatedContent(
                 targetState = selectedIndex,
                 transitionSpec = {

@@ -3,11 +3,16 @@ package com.loraxx.electrick.autosweep.ui.login
 import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.loraxx.electrick.autosweep.domain.repository.LoginRepository
+import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
+import com.loraxx.electrick.autosweep.ui.fields.StateValidator
+import com.loraxx.electrick.autosweep.ui.fields.ValidationState
 import com.loraxx.electrick.autosweep.ui.fields.accountNumberStateValidator
 import com.loraxx.electrick.autosweep.ui.fields.emailStateValidator
 import com.loraxx.electrick.autosweep.ui.fields.passwordStateValidator
 import com.loraxx.electrick.autosweep.ui.fields.plateNumberStateValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
+import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -20,7 +25,9 @@ import javax.inject.Inject
 
 @OptIn(FlowPreview::class)
 @HiltViewModel
-class LoginViewModel @Inject constructor() : ViewModel() {
+class LoginViewModel @Inject constructor(
+    private val loginRepository: LoginRepository,
+) : ViewModel() {
 
     private val _loginUiState = MutableStateFlow(LoginUiState())
     val loginUiState: StateFlow<LoginUiState> = _loginUiState.asStateFlow()
@@ -29,67 +36,41 @@ class LoginViewModel @Inject constructor() : ViewModel() {
     val registrationUiState: StateFlow<RegistrationUiState> = _registrationUiState.asStateFlow()
 
     init {
-        viewModelScope.launch {
-            snapshotFlow { _loginUiState.value.emailField.textFieldState.text }
-                .debounce(300L)
-                .distinctUntilChanged().collect { email ->
-                    _loginUiState.update { currentState ->
-                        currentState.copy(
-                            emailField = currentState.emailField.copy(
-                                validationState = emailStateValidator(email.toString(), false),
-                            )
-                        )
-                    }
-                }
-        }
-        viewModelScope.launch {
-            snapshotFlow { _loginUiState.value.passwordField.textFieldState.text }
-                .debounce(300L)
-                .distinctUntilChanged().collect { password ->
-                    _loginUiState.update { currentState ->
-                        currentState.copy(
-                            passwordField = currentState.passwordField.copy(
-                                validationState = passwordStateValidator(
-                                    password.toString(),
-                                    false,
-                                ),
-                            )
-                        )
-                    }
-                }
-        }
-        viewModelScope.launch {
-            snapshotFlow { _registrationUiState.value.accountNumberField.textFieldState.text }
-                .debounce(300L)
-                .distinctUntilChanged().collect { accountNumber ->
-                    _registrationUiState.update { currentState ->
-                        currentState.copy(
-                            accountNumberField = currentState.accountNumberField.copy(
-                                validationState = accountNumberStateValidator(
-                                    accountNumber.toString(),
-                                    false,
-                                ),
-                            )
-                        )
-                    }
-                }
-        }
-        viewModelScope.launch {
-            snapshotFlow { _registrationUiState.value.plateNumberField.textFieldState.text }
-                .debounce(300L)
-                .distinctUntilChanged().collect { plateNumber ->
-                    _registrationUiState.update { currentState ->
-                        currentState.copy(
-                            plateNumberField = currentState.plateNumberField.copy(
-                                validationState = plateNumberStateValidator(
-                                    plateNumber.toString(),
-                                    false,
-                                )
-                            )
-                        )
-                    }
-                }
-        }
+        viewModelScope.launchValidationFlow(
+            uiState = _loginUiState,
+            fieldSelector = { state -> state.emailField },
+            validator = emailStateValidator,
+            updateFieldState = { uiState, updatedField ->
+                uiState.copy(emailField = updatedField)
+            },
+        )
+
+        viewModelScope.launchValidationFlow(
+            uiState = _loginUiState,
+            fieldSelector = { state -> state.passwordField },
+            validator = passwordStateValidator,
+            updateFieldState = { uiState, updatedField ->
+                uiState.copy(passwordField = updatedField)
+            },
+        )
+
+        viewModelScope.launchValidationFlow(
+            uiState = _registrationUiState,
+            fieldSelector = { state -> state.accountNumberField },
+            validator = accountNumberStateValidator,
+            updateFieldState = { uiState, updatedField ->
+                uiState.copy(accountNumberField = updatedField)
+            },
+        )
+
+        viewModelScope.launchValidationFlow(
+            uiState = _registrationUiState,
+            fieldSelector = { state -> state.plateNumberField },
+            validator = plateNumberStateValidator,
+            updateFieldState = { uiState, updatedField ->
+                uiState.copy(plateNumberField = updatedField)
+            },
+        )
     }
 
     fun updateSelectedIndex(index: Int) {
@@ -100,7 +81,26 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun validateCredentials(email: String, password: String) {
+    fun login(email: String, password: String) {
+        if (isCredentialsValid(email, password)) {
+            viewModelScope.launch {
+                _loginUiState.update { currentState ->
+                    currentState.copy(isLoading = true)
+                }
+                val loginResult = loginRepository.login(email, password)
+
+                _loginUiState.update { currentState ->
+                    currentState.copy(
+                        isLoading = false,
+                        loginResult = loginResult,
+                    )
+                }
+            }
+        }
+    }
+
+    private fun isCredentialsValid(email: String, password: String): Boolean {
+        //Trigger the validation first then return the result based on the updated field states
         _loginUiState.update { currentState ->
             currentState.copy(
                 emailField = currentState.emailField.copy(
@@ -113,6 +113,17 @@ class LoginViewModel @Inject constructor() : ViewModel() {
                 passwordField = currentState.passwordField.copy(
                     validationState = passwordStateValidator(password, true),
                 )
+            )
+        }
+
+        return _loginUiState.value.emailField.validationState == ValidationState.VALID
+                && _loginUiState.value.passwordField.validationState == ValidationState.VALID
+    }
+
+    fun onLoginResultConsumed() {
+        _loginUiState.update { currentState ->
+            currentState.copy(
+                loginResult = null,
             )
         }
     }
@@ -134,4 +145,27 @@ class LoginViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    private fun <UI_STATE> CoroutineScope.launchValidationFlow(
+        uiState: MutableStateFlow<UI_STATE>,
+        fieldSelector: (UI_STATE) -> InputFieldState,
+        validator: StateValidator,
+        updateFieldState: (UI_STATE, InputFieldState) -> UI_STATE,
+    ) {
+        this.launch {
+            snapshotFlow { fieldSelector(uiState.value).textFieldState.text }
+                .debounce(300L)
+                .distinctUntilChanged()
+                .collect { text ->
+                    uiState.update { uiState ->
+                        val currentField = fieldSelector(uiState)
+                        updateFieldState(
+                            uiState,
+                            currentField.copy(
+                                validationState = validator(text.toString(), false),
+                            )
+                        )
+                    }
+                }
+        }
+    }
 }
