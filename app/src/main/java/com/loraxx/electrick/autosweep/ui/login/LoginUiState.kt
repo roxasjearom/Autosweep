@@ -1,6 +1,7 @@
 package com.loraxx.electrick.autosweep.ui.login
 
 import com.loraxx.electrick.autosweep.domain.model.LoginResult
+import com.loraxx.electrick.autosweep.domain.model.RegistrationResult
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
 
 data class LoginUiState(
@@ -14,6 +15,6 @@ data class LoginUiState(
 data class RegistrationUiState(
     val accountNumberField: InputFieldState = InputFieldState(),
     val plateNumberField: InputFieldState = InputFieldState(),
-    val isRegistrationSuccessful: Boolean = false,
-    val errorMessage: String? = null,
+    val isLoading: Boolean = false,
+    val registrationResult: RegistrationResult? = null,
 )
