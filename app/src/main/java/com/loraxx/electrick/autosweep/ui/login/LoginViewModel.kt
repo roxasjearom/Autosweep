@@ -128,7 +128,32 @@ class LoginViewModel @Inject constructor(
         }
     }
 
-    fun validateRegistration(accountNumber: String, plateNumber: String) {
+    fun register(accountNumber: String, plateNumber: String) {
+        if (isRegistrationValid(accountNumber, plateNumber)) {
+            viewModelScope.launch {
+                _registrationUiState.update { currentState ->
+                    currentState.copy(isLoading = true)
+                }
+                val registrationResult = loginRepository.register(accountNumber, plateNumber)
+                _registrationUiState.update { currentState ->
+                    currentState.copy(
+                        isLoading = false,
+                        registrationResult = registrationResult,
+                    )
+                }
+            }
+        }
+    }
+
+    fun onRegistrationResultConsumed() {
+        _registrationUiState.update { currentState ->
+            currentState.copy(
+                registrationResult = null,
+            )
+        }
+    }
+
+    private fun isRegistrationValid(accountNumber: String, plateNumber: String): Boolean {
         _registrationUiState.update { currentState ->
             currentState.copy(
                 accountNumberField = currentState.accountNumberField.copy(
@@ -143,6 +168,9 @@ class LoginViewModel @Inject constructor(
                 )
             )
         }
+
+        return _registrationUiState.value.accountNumberField.validationState == ValidationState.VALID &&
+                _registrationUiState.value.plateNumberField.validationState == ValidationState.VALID
     }
 
     private fun <UI_STATE> CoroutineScope.launchValidationFlow(

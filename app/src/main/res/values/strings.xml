@@ -29,4 +29,7 @@
     <string name="error_plate_number_empty">Enter your plate number</string>
     <string name="error_plate_number_invalid">Invalid plate number</string>
     <string name="hint_format_plate_number">ABC1234</string>
+    <string name="registration_account_not_found">Account Not Found</string>
+    <string name="registration_account_not_found_description">The details you entered doesn’t match our records. Make sure everything is correct and try again.</string>
+    <string name="button_label_okay">Okay</string>
 </resources>
