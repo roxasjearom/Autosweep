@@ -4,16 +4,17 @@ plugins {
     alias(libs.plugins.kotlin.compose)
     alias(libs.plugins.hilt.android)
     alias(libs.plugins.kotlin.android.ksp)
+    alias(libs.plugins.jetbrains.kotlin.serialization)
 }
 
 android {
     namespace = "com.loraxx.electrick.autosweep"
-    compileSdk = 35
+    compileSdk = 36
 
     defaultConfig {
         applicationId = "com.loraxx.electrick.autosweep"
         minSdk = 24
-        targetSdk = 35
+        targetSdk = 36
         versionCode = 1
         versionName = "1.0"
 
@@ -87,4 +88,9 @@ dependencies {
     //Coil
     implementation(libs.coil.kt)
     implementation(libs.coil.kt.compose)
+
+    //Navigation
+    implementation(libs.androidx.navigation3.ui)
+    implementation(libs.androidx.navigation3.runtime)
+    implementation(libs.kotlinx.serialization.core)
 }
