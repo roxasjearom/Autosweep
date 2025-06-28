@@ -4,22 +4,26 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.activity.viewModels
 import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.ui.Modifier
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
+import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import com.loraxx.electrick.autosweep.navigation.Login
 import com.loraxx.electrick.autosweep.navigation.QuickBalance
 import com.loraxx.electrick.autosweep.ui.login.LoginScreen
 import com.loraxx.electrick.autosweep.ui.login.LoginViewModel
 import com.loraxx.electrick.autosweep.ui.quickbalance.QuickBalanceScreen
+import com.loraxx.electrick.autosweep.ui.quickbalance.QuickBalanceViewModel
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -30,15 +34,19 @@ class MainActivity : ComponentActivity() {
         enableEdgeToEdge()
         setContent {
             Autosweep20Theme {
-                val loginViewModel: LoginViewModel by viewModels()
-
                 val backStack = rememberNavBackStack(Login)
 
                 Scaffold { paddingValues ->
                     NavDisplay(
                         backStack = backStack,
                         onBack = { backStack.removeLastOrNull() },
+                        entryDecorators = listOf(
+                            rememberSceneSetupNavEntryDecorator(),
+                            rememberSavedStateNavEntryDecorator(),
+                            rememberViewModelStoreNavEntryDecorator()
+                        ),
                         entryProvider = entryProvider {
+                            val loginViewModel: LoginViewModel = hiltViewModel()
                             entry<Login> {
                                 LoginScreen(
                                     loginViewModel = loginViewModel,
@@ -51,7 +59,11 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             entry<QuickBalance> {
-                                QuickBalanceScreen()
+                                val quickBalanceViewModel: QuickBalanceViewModel = hiltViewModel()
+                                QuickBalanceScreen(
+                                    viewModel = quickBalanceViewModel,
+                                    navigateBack = { backStack.removeLastOrNull() }
+                                )
                             }
                         },
                         modifier = Modifier.padding(paddingValues),

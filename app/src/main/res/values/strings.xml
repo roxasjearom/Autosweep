@@ -32,4 +32,8 @@
     <string name="registration_account_not_found">Account Not Found</string>
     <string name="registration_account_not_found_description">The details you entered doesn’t match our records. Make sure everything is correct and try again.</string>
     <string name="button_label_okay">Okay</string>
+    <string name="quick_balance_header">Quick Balance</string>
+    <string name="quick_balance_sub_header">Enter your registered RFID account number to check your balance.</string>
+    <string name="button_check_balance">Check Balance</string>
+    <string name="account_balance">Account Balance</string>
 </resources>

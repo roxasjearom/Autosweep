@@ -1,6 +1,8 @@
 package com.loraxx.electrick.autosweep.di
 
+import com.loraxx.electrick.autosweep.data.repository.BalanceRepositoryImpl
 import com.loraxx.electrick.autosweep.data.repository.LoginRepositoryImpl
+import com.loraxx.electrick.autosweep.domain.repository.BalanceRepository
 import com.loraxx.electrick.autosweep.domain.repository.LoginRepository
 import dagger.Binds
 import dagger.Module
@@ -12,4 +14,7 @@ import dagger.hilt.components.SingletonComponent
 abstract class RepositoryModule {
     @Binds
     abstract fun bindLoginRepository(loginRepositoryImpl: LoginRepositoryImpl): LoginRepository
+
+    @Binds
+    abstract fun bindBalanceRepository(balanceRepositoryImpl: BalanceRepositoryImpl): BalanceRepository
 }
