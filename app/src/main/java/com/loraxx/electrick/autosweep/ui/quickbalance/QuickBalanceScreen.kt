@@ -1,24 +1,195 @@
 package com.loraxx.electrick.autosweep.ui.quickbalance
 
-import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.core.FiniteAnimationSpec
+import androidx.compose.animation.core.Spring.DampingRatioHighBouncy
+import androidx.compose.animation.core.Spring.StiffnessHigh
+import androidx.compose.animation.core.spring
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.slideInVertically
+import androidx.compose.animation.slideOutVertically
+import androidx.compose.animation.togetherWith
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
+import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.loraxx.electrick.autosweep.R
+import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
+import com.loraxx.electrick.autosweep.ui.login.AccountNumberTextField
+import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
+import com.loraxx.electrick.autosweep.utils.toPhilippinePeso
 
 @Composable
-fun QuickBalanceScreen(modifier: Modifier = Modifier) {
+fun QuickBalanceScreen(
+    modifier: Modifier = Modifier,
+    viewModel: QuickBalanceViewModel,
+    navigateBack: () -> Unit,
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    QuickBalanceScreen(
+        modifier = modifier,
+        accountBalance = uiState.accountBalance,
+        accountNumberInputFieldState = uiState.accountNumberField,
+        onCheckBalanceClick = { accountNumber -> viewModel.checkBalance(accountNumber) },
+        navigateBack = navigateBack,
+    )
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun QuickBalanceScreen(
+    modifier: Modifier = Modifier,
+    accountBalance: Double,
+    accountNumberInputFieldState: InputFieldState,
+    onCheckBalanceClick: (String) -> Unit,
+    navigateBack: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("") },
+                navigationIcon = {
+                    IconButton(onClick = navigateBack) {
+                        Icon(
+                            imageVector = Icons.AutoMirrored.Filled.ArrowBack,
+                            contentDescription = "Navigate back"
+                        )
+                    }
+                },
+            )
+        }
+    ) { contentPadding ->
+        Column(
+            modifier = modifier
+                .fillMaxSize()
+                .padding(contentPadding)
+                .padding(horizontal = 16.dp, vertical = 8.dp),
+        ) {
+            Text(
+                text = stringResource(R.string.quick_balance_header),
+                style = MaterialTheme.typography.displaySmall,
+            )
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = stringResource(R.string.quick_balance_sub_header),
+                style = MaterialTheme.typography.bodyLarge,
+            )
+
+            Spacer(modifier = Modifier.height(48.dp))
+
+            AccountBalanceSection(accountBalance = accountBalance)
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            AccountNumberTextField(
+                modifier = Modifier.fillMaxWidth(),
+                accountNumberInputFieldState = accountNumberInputFieldState,
+                imeAction = ImeAction.Done,
+                onKeyboardActionClick = {
+                    onCheckBalanceClick(
+                        accountNumberInputFieldState.textFieldState.text.toString(),
+                    )
+                }
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            Button(
+                onClick = {
+                    onCheckBalanceClick(
+                        accountNumberInputFieldState.textFieldState.text.toString(),
+                    )
+                },
+                modifier = Modifier.fillMaxWidth()
+            ) {
+                Text(
+                    stringResource(R.string.button_check_balance),
+                    style = MaterialTheme.typography.labelLarge,
+                )
+            }
+        }
+    }
+}
+
+@Composable
+fun AccountBalanceSection(modifier: Modifier = Modifier, accountBalance: Double) {
     Column(
-        modifier = modifier.fillMaxSize(),
-        verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(8.dp))
+            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.outlineVariant,
+                shape = RoundedCornerShape(8.dp),
+            )
+            .padding(16.dp)
     ) {
         Text(
-            text = "Quick Balance Screen",
-            style = MaterialTheme.typography.headlineLarge,
+            text = stringResource(R.string.account_balance),
+            style = MaterialTheme.typography.bodyMedium,
+        )
+        Spacer(modifier = Modifier.height(4.dp))
+
+        val bounceAnimationSpec: FiniteAnimationSpec<IntOffset> =
+            spring(dampingRatio = DampingRatioHighBouncy, stiffness = StiffnessHigh)
+
+        AnimatedContent(
+            targetState = accountBalance,
+            transitionSpec = {
+                if (targetState > initialState) {
+                    slideInVertically(animationSpec = bounceAnimationSpec) { width -> -width } + fadeIn() togetherWith
+                            slideOutVertically { width -> width } + fadeOut()
+
+                } else {
+                    slideInVertically(animationSpec = bounceAnimationSpec) { width -> width } + fadeIn() togetherWith
+                            slideOutVertically { width -> -width } + fadeOut()
+                }
+            },
+        ) { targetCount ->
+            Text(
+                text = targetCount.toPhilippinePeso(),
+                style = MaterialTheme.typography.headlineMedium,
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun QuickBalancePreview(modifier: Modifier = Modifier) {
+    Autosweep20Theme {
+        QuickBalanceScreen(
+            accountBalance = 1200.0,
+            accountNumberInputFieldState = InputFieldState(),
+            onCheckBalanceClick = {},
+            navigateBack = {},
         )
     }
 }

@@ -88,7 +88,6 @@ class LoginViewModel @Inject constructor(
                     currentState.copy(isLoading = true)
                 }
                 val loginResult = loginRepository.login(email, password)
-
                 _loginUiState.update { currentState ->
                     currentState.copy(
                         isLoading = false,

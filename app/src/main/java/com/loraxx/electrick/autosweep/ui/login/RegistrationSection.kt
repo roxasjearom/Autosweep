@@ -55,7 +55,7 @@ fun RegistrationSection(
         PlateNumberTextField(
             modifier = Modifier.fillMaxWidth(),
             plateNumberInputFieldState = plateNumberInputFieldState,
-            onKeyboardActionClicked = {
+            onKeyboardActionClick = {
                 onRegisterClicked(
                     accountNumberInputFieldState.textFieldState.text.toString(),
                     plateNumberInputFieldState.textFieldState.text.toString(),
@@ -86,6 +86,8 @@ fun RegistrationSection(
 fun AccountNumberTextField(
     modifier: Modifier = Modifier,
     accountNumberInputFieldState: InputFieldState,
+    imeAction: ImeAction = ImeAction.Next,
+    onKeyboardActionClick: () -> Unit = { },
 ) {
     val hasError = accountNumberInputFieldState.validationState != ValidationState.INITIAL &&
             accountNumberInputFieldState.validationState != ValidationState.VALID
@@ -96,8 +98,12 @@ fun AccountNumberTextField(
         lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Number,
-            imeAction = ImeAction.Next,
+            imeAction = imeAction,
         ),
+        onKeyboardAction = { performDefaultAction ->
+            onKeyboardActionClick()
+            performDefaultAction()
+        },
         inputTransformation = InputTransformation
             .maxLength(7)
             .then(DigitOnlyInputTransformation()),
@@ -124,7 +130,8 @@ fun AccountNumberTextField(
 fun PlateNumberTextField(
     modifier: Modifier = Modifier,
     plateNumberInputFieldState: InputFieldState,
-    onKeyboardActionClicked: () -> Unit = { },
+    imeAction: ImeAction = ImeAction.Done,
+    onKeyboardActionClick: () -> Unit = { },
 ) {
     val hasError = plateNumberInputFieldState.validationState != ValidationState.INITIAL &&
             plateNumberInputFieldState.validationState != ValidationState.VALID
@@ -135,7 +142,7 @@ fun PlateNumberTextField(
         lineLimits = TextFieldLineLimits.SingleLine,
         keyboardOptions = KeyboardOptions(
             keyboardType = KeyboardType.Text,
-            imeAction = ImeAction.Done,
+            imeAction = imeAction,
             capitalization = KeyboardCapitalization.Characters,
         ),
         inputTransformation = InputTransformation
@@ -159,7 +166,7 @@ fun PlateNumberTextField(
             }
         },
         onKeyboardAction = { performDefaultAction ->
-            onKeyboardActionClicked()
+            onKeyboardActionClick()
             performDefaultAction()
         },
     )
