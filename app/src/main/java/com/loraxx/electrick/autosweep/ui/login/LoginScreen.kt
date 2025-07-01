@@ -66,6 +66,7 @@ fun LoginScreen(
     loginViewModel: LoginViewModel,
     onForgotPasswordClicked: () -> Unit,
     onQuickBalanceClicked: () -> Unit,
+    navigateToDashboard: () -> Unit,
 ) {
     val loginUiState by loginViewModel.loginUiState.collectAsStateWithLifecycle()
     val registrationUiState by loginViewModel.registrationUiState.collectAsStateWithLifecycle()
@@ -76,10 +77,8 @@ fun LoginScreen(
     LaunchedEffect(loginUiState.loginResult) {
         when (loginUiState.loginResult) {
             LoginResult.Success -> {
-                Toast.makeText(context, "Login successful!", Toast.LENGTH_SHORT).show()
-                //TODO navigate to dashboard
+                navigateToDashboard()
             }
-
             is LoginResult.Error -> {
                 val errorMessage = (loginUiState.loginResult as LoginResult.Error).message
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()

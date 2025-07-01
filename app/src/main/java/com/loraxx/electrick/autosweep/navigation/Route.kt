@@ -8,3 +8,6 @@ data object Login : NavKey
 
 @Serializable
 data object QuickBalance : NavKey
+
+@Serializable
+data object Dashboard : NavKey

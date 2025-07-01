@@ -18,8 +18,10 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.runtime.rememberSavedStateNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
+import com.loraxx.electrick.autosweep.navigation.Dashboard
 import com.loraxx.electrick.autosweep.navigation.Login
 import com.loraxx.electrick.autosweep.navigation.QuickBalance
+import com.loraxx.electrick.autosweep.ui.dashboard.DashboardScreen
 import com.loraxx.electrick.autosweep.ui.login.LoginScreen
 import com.loraxx.electrick.autosweep.ui.login.LoginViewModel
 import com.loraxx.electrick.autosweep.ui.quickbalance.QuickBalanceScreen
@@ -55,6 +57,10 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onQuickBalanceClicked = {
                                         backStack.add(QuickBalance)
+                                    },
+                                    navigateToDashboard = {
+                                        backStack.removeLastOrNull()
+                                        backStack.add(Dashboard)
                                     }
                                 )
                             }
@@ -64,6 +70,9 @@ class MainActivity : ComponentActivity() {
                                     viewModel = quickBalanceViewModel,
                                     navigateBack = { backStack.removeLastOrNull() }
                                 )
+                            }
+                            entry<Dashboard> {
+                                DashboardScreen()
                             }
                         },
                         modifier = Modifier.padding(paddingValues),
