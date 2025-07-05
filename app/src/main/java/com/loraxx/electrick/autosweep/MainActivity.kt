@@ -22,6 +22,7 @@ import com.loraxx.electrick.autosweep.navigation.Dashboard
 import com.loraxx.electrick.autosweep.navigation.Login
 import com.loraxx.electrick.autosweep.navigation.QuickBalance
 import com.loraxx.electrick.autosweep.ui.dashboard.DashboardScreen
+import com.loraxx.electrick.autosweep.ui.dashboard.DashboardViewModel
 import com.loraxx.electrick.autosweep.ui.login.LoginScreen
 import com.loraxx.electrick.autosweep.ui.login.LoginViewModel
 import com.loraxx.electrick.autosweep.ui.quickbalance.QuickBalanceScreen
@@ -72,7 +73,16 @@ class MainActivity : ComponentActivity() {
                                 )
                             }
                             entry<Dashboard> {
-                                DashboardScreen()
+                                val dashboardViewModel: DashboardViewModel = hiltViewModel()
+                                DashboardScreen(
+                                    viewModel = dashboardViewModel,
+                                    onTopUpClick = {
+                                        //TODO navigate to Top up screen
+                                    },
+                                    onHistoryClick = {
+                                        //TODO navigate to Transaction History screen
+                                    }
+                                )
                             }
                         },
                         modifier = Modifier.padding(paddingValues),

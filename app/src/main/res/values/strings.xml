@@ -10,6 +10,7 @@
     <string name="hint_password">Password</string>
     <string name="hint_account_number">RFID Account number</string>
     <string name="hint_plate_number">Plate number</string>
+    <string name="hint_format_plate_number">ABC1234</string>
 
     <string name="button_login">Login</string>
     <string name="button_register">Register</string>
@@ -18,8 +19,11 @@
     <string name="button_group_login">Login</string>
     <string name="button_group_register">Register</string>
     <string name="button_top_up">Top up</string>
+    <string name="button_check_balance">Check Balance</string>
+    <string name="button_label_okay">Okay</string>
 
     <string name="cd_toggle_password_visibility">Toggle password visibility</string>
+    <string name="cd_transaction_history">Transaction history</string>
 
     <string name="error_email_empty">Please enter your email</string>
     <string name="error_email_invalid">Email is invalid</string>
@@ -29,13 +33,14 @@
     <string name="error_account_number_invalid">Invalid account number</string>
     <string name="error_plate_number_empty">Enter your plate number</string>
     <string name="error_plate_number_invalid">Invalid plate number</string>
-    <string name="hint_format_plate_number">ABC1234</string>
+
+
     <string name="registration_account_not_found">Account Not Found</string>
     <string name="registration_account_not_found_description">The details you entered doesn’t match our records. Make sure everything is correct and try again.</string>
-    <string name="button_label_okay">Okay</string>
+
     <string name="quick_balance_header">Quick Balance</string>
     <string name="quick_balance_sub_header">Enter your registered RFID account number to check your balance.</string>
-    <string name="button_check_balance">Check Balance</string>
-    <string name="account_balance">Account Balance</string>
 
+    <string name="account_balance">Account Balance</string>
+    <string name="dashboard_my_account">My account</string>
 </resources>
