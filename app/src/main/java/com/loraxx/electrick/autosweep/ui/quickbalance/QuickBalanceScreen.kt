@@ -23,17 +23,20 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.material3.TopAppBar
+import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
@@ -61,7 +64,7 @@ fun QuickBalanceScreen(
     )
 }
 
-@OptIn(ExperimentalMaterial3Api::class)
+@OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
 @Composable
 fun QuickBalanceScreen(
     modifier: Modifier = Modifier,
@@ -72,8 +75,22 @@ fun QuickBalanceScreen(
 ) {
     Scaffold(
         topBar = {
-            TopAppBar(
-                title = { Text("") },
+            LargeFlexibleTopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.quick_balance_header),
+                        style = MaterialTheme.typography.displaySmall,
+                        color = MaterialTheme.colorScheme.surfaceTint,
+                    )
+                },
+                subtitle = {
+                    Text(
+                        text = stringResource(R.string.quick_balance_sub_header),
+                        style = MaterialTheme.typography.bodyLarge,
+                    )
+                },
+                colors = TopAppBarDefaults.topAppBarColors()
+                    .copy(containerColor = MaterialTheme.colorScheme.surfaceContainerLowest),
                 navigationIcon = {
                     IconButton(onClick = navigateBack) {
                         Icon(
@@ -88,19 +105,10 @@ fun QuickBalanceScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                 .padding(contentPadding)
-                .padding(horizontal = 16.dp, vertical = 8.dp),
+                .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            Text(
-                text = stringResource(R.string.quick_balance_header),
-                style = MaterialTheme.typography.displaySmall,
-            )
-            Spacer(modifier = Modifier.height(8.dp))
-            Text(
-                text = stringResource(R.string.quick_balance_sub_header),
-                style = MaterialTheme.typography.bodyLarge,
-            )
-
             Spacer(modifier = Modifier.height(48.dp))
 
             AccountBalanceSection(accountBalance = accountBalance)
@@ -121,12 +129,12 @@ fun QuickBalanceScreen(
             Spacer(modifier = Modifier.height(24.dp))
 
             Button(
+                modifier = Modifier.fillMaxWidth(),
                 onClick = {
                     onCheckBalanceClick(
                         accountNumberInputFieldState.textFieldState.text.toString(),
                     )
                 },
-                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     stringResource(R.string.button_check_balance),
@@ -143,7 +151,7 @@ fun AccountBalanceSection(modifier: Modifier = Modifier, accountBalance: Double)
         modifier = modifier
             .fillMaxWidth()
             .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .background(MaterialTheme.colorScheme.surface)
             .border(
                 width = 1.dp,
                 color = MaterialTheme.colorScheme.outlineVariant,
@@ -175,7 +183,7 @@ fun AccountBalanceSection(modifier: Modifier = Modifier, accountBalance: Double)
         ) { targetCount ->
             Text(
                 text = targetCount.toPhilippinePeso(),
-                style = MaterialTheme.typography.headlineMedium,
+                style = MaterialTheme.typography.headlineMedium.copy(fontWeight = FontWeight.Medium),
             )
         }
     }

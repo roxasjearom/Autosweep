@@ -13,10 +13,12 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Visibility
 import androidx.compose.material.icons.filled.VisibilityOff
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedSecureTextField
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
@@ -27,12 +29,15 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
 import com.loraxx.electrick.autosweep.ui.fields.ValidationState
+import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 
 @Composable
 fun LoginSection(
@@ -46,8 +51,7 @@ fun LoginSection(
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
-        ) {
-
+    ) {
         EmailTextField(
             modifier = Modifier.fillMaxWidth(),
             emailInputFieldState = emailInputFieldState,
@@ -67,11 +71,13 @@ fun LoginSection(
         )
         TextButton(
             modifier = Modifier.align(Alignment.End),
+            colors = ButtonDefaults.textButtonColors()
+                .copy(contentColor = MaterialTheme.colorScheme.secondary),
             onClick = onForgotPasswordClicked
         ) {
             Text(
-                stringResource(R.string.button_forgot_password),
-                style = MaterialTheme.typography.bodySmall,
+                text = stringResource(R.string.button_forgot_password),
+                style = MaterialTheme.typography.bodySmall.copy(fontWeight = FontWeight.Medium),
             )
         }
         Spacer(modifier = Modifier.height(36.dp))
@@ -94,11 +100,13 @@ fun LoginSection(
         Spacer(modifier = Modifier.height(24.dp))
 
         TextButton(
-            onClick = onQuickBalanceClicked
+            colors = ButtonDefaults.textButtonColors()
+                .copy(contentColor = MaterialTheme.colorScheme.secondary),
+            onClick = onQuickBalanceClicked,
         ) {
             Text(
-                stringResource(R.string.button_quick_balance),
-                style = MaterialTheme.typography.labelLarge,
+                text = stringResource(R.string.button_quick_balance),
+                style = MaterialTheme.typography.labelLarge.copy(fontWeight = FontWeight.Medium),
             )
         }
     }
@@ -186,4 +194,20 @@ fun PasswordTextField(
             performDefaultAction()
         },
     )
+}
+
+@Preview
+@Composable
+fun LoginSectionPreview(modifier: Modifier = Modifier) {
+    Autosweep20Theme {
+        Surface {
+            LoginSection(
+                emailInputFieldState = InputFieldState(),
+                passwordInputFieldState = InputFieldState(),
+                onLoginClicked = { _, _ -> },
+                onQuickBalanceClicked = {},
+                onForgotPasswordClicked = {},
+            )
+        }
+    }
 }
