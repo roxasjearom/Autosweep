@@ -11,6 +11,7 @@ import androidx.compose.animation.slideInHorizontally
 import androidx.compose.animation.slideOutHorizontally
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -83,12 +84,15 @@ fun LoginScreen(
                 val errorMessage = (loginUiState.loginResult as LoginResult.Error).message
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
+
             LoginResult.InvalidCredentials -> {
                 Toast.makeText(context, "Invalid credentials!", Toast.LENGTH_SHORT).show()
             }
+
             LoginResult.NetworkError -> {
                 Toast.makeText(context, "Network error!", Toast.LENGTH_SHORT).show()
             }
+
             null -> {
                 //Do nothing
             }
@@ -101,16 +105,21 @@ fun LoginScreen(
             RegistrationResult.Success -> {
                 Toast.makeText(context, "Registration successful!", Toast.LENGTH_SHORT).show()
             }
+
             RegistrationResult.DoesNotExist -> {
                 showDialog = true
             }
+
             RegistrationResult.DoesNotMatch -> {
                 showDialog = true
             }
+
             is RegistrationResult.Error -> {
-                val errorMessage = (registrationUiState.registrationResult as RegistrationResult.Error).message
+                val errorMessage =
+                    (registrationUiState.registrationResult as RegistrationResult.Error).message
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
             }
+
             RegistrationResult.NetworkError -> {
                 Toast.makeText(context, "Network error!", Toast.LENGTH_SHORT).show()
             }
@@ -199,6 +208,7 @@ fun LoginScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
+                .background(MaterialTheme.colorScheme.surfaceContainerLowest)
                 .padding(contentPadding)
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
@@ -279,6 +289,7 @@ fun LoginHeaderSection(modifier: Modifier = Modifier, header: String, subHeader:
             text = header,
             modifier = Modifier.fillMaxWidth(),
             style = MaterialTheme.typography.displayMedium,
+            color = MaterialTheme.colorScheme.surfaceTint,
         )
         Spacer(modifier = Modifier.height(8.dp))
         Text(
@@ -306,6 +317,13 @@ fun LoginButtonGroup(
         options.forEachIndexed { index, label ->
             ToggleButton(
                 checked = selectedIndex == index,
+                colors = ToggleButtonDefaults.toggleButtonColors()
+                    .copy(
+                        containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                        contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                        checkedContainerColor = MaterialTheme.colorScheme.secondary,
+                        checkedContentColor = MaterialTheme.colorScheme.onSecondary,
+                    ),
                 onCheckedChange = { onSelectedIndexChange(index) },
                 modifier = modifiers[index].semantics { role = Role.RadioButton },
                 shapes =
@@ -328,7 +346,7 @@ fun LoginButtonGroup(
 
 @Preview
 @Composable
-fun LoginSectionPreview(modifier: Modifier = Modifier) {
+fun LoginScreenPreview(modifier: Modifier = Modifier) {
     Autosweep20Theme {
         Surface {
             LoginScreen(
