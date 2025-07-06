@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.loraxx.electrick.autosweep.domain.model.BalanceResult
 import com.loraxx.electrick.autosweep.domain.repository.BalanceRepository
-import com.loraxx.electrick.autosweep.ui.fields.ValidationState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -64,6 +63,6 @@ class QuickBalanceViewModel @Inject constructor(
     }
 
     private fun isAccountNumberValid(): Boolean {
-        return _uiState.value.accountNumberField.validationState() == ValidationState.VALID
+        return _uiState.value.accountNumberField.isValid()
     }
 }

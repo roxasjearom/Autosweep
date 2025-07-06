@@ -3,7 +3,6 @@ package com.loraxx.electrick.autosweep.ui.login
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.loraxx.electrick.autosweep.domain.repository.LoginRepository
-import com.loraxx.electrick.autosweep.ui.fields.ValidationState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -49,8 +48,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun isCredentialsValid(): Boolean {
-        return _loginUiState.value.emailField.validationState() == ValidationState.VALID
-                && _loginUiState.value.passwordField.validationState() == ValidationState.VALID
+        return _loginUiState.value.emailField.isValid() && _loginUiState.value.passwordField.isValid()
     }
 
     fun onLoginResultConsumed() {
@@ -87,7 +85,7 @@ class LoginViewModel @Inject constructor(
     }
 
     private fun isRegistrationValid(): Boolean {
-        return _registrationUiState.value.accountNumberField.validationState() == ValidationState.VALID &&
-                _registrationUiState.value.plateNumberField.validationState() == ValidationState.VALID
+        return _registrationUiState.value.accountNumberField.isValid() &&
+                _registrationUiState.value.plateNumberField.isValid()
     }
 }

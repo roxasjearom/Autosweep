@@ -50,8 +50,7 @@ fun LoginSection(
     onForgotPasswordClicked: () -> Unit,
     onQuickBalanceClicked: () -> Unit,
 ) {
-    val areInputsValid = emailInputFieldState.validationState() == ValidationState.VALID
-            && passwordInputFieldState.validationState() == ValidationState.VALID
+    val areInputsValid = emailInputFieldState.isValid() && passwordInputFieldState.isValid()
 
     Column(
         modifier = modifier,
@@ -123,7 +122,7 @@ fun EmailTextField(
     modifier: Modifier = Modifier,
     emailInputFieldState: InputFieldState,
 ) {
-    val hasError = emailInputFieldState.validationState() == ValidationState.INVALID
+    val hasError = emailInputFieldState.getValidationState() == ValidationState.INVALID
 
     OutlinedTextField(
         state = emailInputFieldState.textFieldState,
@@ -140,7 +139,7 @@ fun EmailTextField(
         supportingText = {
             if (hasError) {
                 Text(
-                    text = when (emailInputFieldState.validationState()) {
+                    text = when (emailInputFieldState.getValidationState()) {
                         ValidationState.INVALID -> stringResource(R.string.error_email_invalid)
                         ValidationState.VALID, ValidationState.INITIAL -> ""
                     },
@@ -157,7 +156,7 @@ fun PasswordTextField(
     passwordInputFieldState: InputFieldState,
     onKeyboardActionClicked: () -> Unit = { },
 ) {
-    val hasError = passwordInputFieldState.validationState() == ValidationState.INVALID
+    val hasError = passwordInputFieldState.getValidationState() == ValidationState.INVALID
     var showPassword by remember { mutableStateOf(false) }
 
     OutlinedSecureTextField(
@@ -183,7 +182,7 @@ fun PasswordTextField(
         supportingText = {
             if (hasError) {
                 Text(
-                    text = when (passwordInputFieldState.validationState()) {
+                    text = when (passwordInputFieldState.getValidationState()) {
                         ValidationState.INVALID -> stringResource(R.string.error_password_invalid)
                         ValidationState.INITIAL, ValidationState.VALID -> ""
                     },
