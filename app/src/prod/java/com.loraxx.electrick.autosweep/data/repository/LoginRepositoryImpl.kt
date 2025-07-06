@@ -6,7 +6,7 @@ import com.loraxx.electrick.autosweep.domain.repository.LoginRepository
 import javax.inject.Inject
 
 class LoginRepositoryImpl @Inject constructor() : LoginRepository {
-    override fun login(email: String, password: String): LoginResult {
+    override suspend fun login(email: String, password: String): LoginResult {
         //TODO Update this once we have a valid API
         return when {
             email == "admin@prod.com" && password == "admin" -> LoginResult.Success
@@ -14,7 +14,7 @@ class LoginRepositoryImpl @Inject constructor() : LoginRepository {
         }
     }
 
-    override fun register(accountNumber: String, plateNumber: String): RegistrationResult {
+    override suspend fun register(accountNumber: String, plateNumber: String): RegistrationResult {
         TODO("Not yet implemented")
     }
 }

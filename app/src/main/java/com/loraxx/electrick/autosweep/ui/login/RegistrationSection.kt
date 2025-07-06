@@ -31,6 +31,8 @@ import com.loraxx.electrick.autosweep.ui.fields.DigitOnlyInputTransformation
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
 import com.loraxx.electrick.autosweep.ui.fields.NoSpaceInputTransformation
 import com.loraxx.electrick.autosweep.ui.fields.ValidationState
+import com.loraxx.electrick.autosweep.ui.fields.accountNumberStateValidator
+import com.loraxx.electrick.autosweep.ui.fields.plateNumberStateValidator
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 
 @Composable
@@ -40,6 +42,8 @@ fun RegistrationSection(
     plateNumberInputFieldState: InputFieldState,
     onRegisterClicked: (accountNumber: String, plateNumber: String) -> Unit,
 ) {
+    val areInputsValid = accountNumberInputFieldState.validationState() == ValidationState.VALID &&
+            plateNumberInputFieldState.validationState() == ValidationState.VALID
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -66,6 +70,7 @@ fun RegistrationSection(
         Spacer(modifier = Modifier.height(36.dp))
 
         Button(
+            enabled = areInputsValid,
             onClick = {
                 onRegisterClicked(
                     accountNumberInputFieldState.textFieldState.text.toString(),
@@ -89,8 +94,7 @@ fun AccountNumberTextField(
     imeAction: ImeAction = ImeAction.Next,
     onKeyboardActionClick: () -> Unit = { },
 ) {
-    val hasError = accountNumberInputFieldState.validationState != ValidationState.INITIAL &&
-            accountNumberInputFieldState.validationState != ValidationState.VALID
+    val hasError = accountNumberInputFieldState.validationState() == ValidationState.INVALID
 
     OutlinedTextField(
         state = accountNumberInputFieldState.textFieldState,
@@ -114,10 +118,9 @@ fun AccountNumberTextField(
         supportingText = {
             if (hasError) {
                 Text(
-                    text = when (accountNumberInputFieldState.validationState) {
-                        ValidationState.EMPTY -> stringResource(R.string.error_account_number_empty)
+                    text = when (accountNumberInputFieldState.validationState()) {
                         ValidationState.INVALID -> stringResource(R.string.error_account_number_invalid)
-                        else -> ""
+                        ValidationState.VALID, ValidationState.INITIAL -> ""
                     },
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -133,8 +136,7 @@ fun PlateNumberTextField(
     imeAction: ImeAction = ImeAction.Done,
     onKeyboardActionClick: () -> Unit = { },
 ) {
-    val hasError = plateNumberInputFieldState.validationState != ValidationState.INITIAL &&
-            plateNumberInputFieldState.validationState != ValidationState.VALID
+    val hasError = plateNumberInputFieldState.validationState() == ValidationState.INVALID
 
     OutlinedTextField(
         state = plateNumberInputFieldState.textFieldState,
@@ -156,10 +158,9 @@ fun PlateNumberTextField(
         supportingText = {
             if (hasError) {
                 Text(
-                    text = when (plateNumberInputFieldState.validationState) {
-                        ValidationState.EMPTY -> stringResource(R.string.error_plate_number_empty)
+                    text = when (plateNumberInputFieldState.validationState()) {
                         ValidationState.INVALID -> stringResource(R.string.error_plate_number_invalid)
-                        else -> ""
+                        ValidationState.VALID, ValidationState.INITIAL -> ""
                     },
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -178,8 +179,8 @@ fun RegistrationSectionPreview(modifier: Modifier = Modifier) {
     Autosweep20Theme {
         Surface {
             RegistrationSection(
-                accountNumberInputFieldState = InputFieldState(),
-                plateNumberInputFieldState = InputFieldState(),
+                accountNumberInputFieldState = InputFieldState(validator = accountNumberStateValidator),
+                plateNumberInputFieldState = InputFieldState(validator = plateNumberStateValidator),
                 onRegisterClicked = { _, _ -> },
             )
         }

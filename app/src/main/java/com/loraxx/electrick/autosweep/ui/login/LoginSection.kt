@@ -37,6 +37,8 @@ import androidx.compose.ui.unit.dp
 import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
 import com.loraxx.electrick.autosweep.ui.fields.ValidationState
+import com.loraxx.electrick.autosweep.ui.fields.emailStateValidator
+import com.loraxx.electrick.autosweep.ui.fields.passwordStateValidator
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 
 @Composable
@@ -48,6 +50,9 @@ fun LoginSection(
     onForgotPasswordClicked: () -> Unit,
     onQuickBalanceClicked: () -> Unit,
 ) {
+    val areInputsValid = emailInputFieldState.validationState() == ValidationState.VALID
+            && passwordInputFieldState.validationState() == ValidationState.VALID
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -83,6 +88,7 @@ fun LoginSection(
         Spacer(modifier = Modifier.height(36.dp))
 
         Button(
+            enabled = areInputsValid,
             onClick = {
                 onLoginClicked(
                     emailInputFieldState.textFieldState.text.toString(),
@@ -117,8 +123,7 @@ fun EmailTextField(
     modifier: Modifier = Modifier,
     emailInputFieldState: InputFieldState,
 ) {
-    val hasError = emailInputFieldState.validationState != ValidationState.INITIAL &&
-            emailInputFieldState.validationState != ValidationState.VALID
+    val hasError = emailInputFieldState.validationState() == ValidationState.INVALID
 
     OutlinedTextField(
         state = emailInputFieldState.textFieldState,
@@ -135,10 +140,9 @@ fun EmailTextField(
         supportingText = {
             if (hasError) {
                 Text(
-                    text = when (emailInputFieldState.validationState) {
-                        ValidationState.EMPTY -> stringResource(R.string.error_email_empty)
+                    text = when (emailInputFieldState.validationState()) {
                         ValidationState.INVALID -> stringResource(R.string.error_email_invalid)
-                        else -> ""
+                        ValidationState.VALID, ValidationState.INITIAL -> ""
                     },
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -153,8 +157,7 @@ fun PasswordTextField(
     passwordInputFieldState: InputFieldState,
     onKeyboardActionClicked: () -> Unit = { },
 ) {
-    val hasError = passwordInputFieldState.validationState != ValidationState.INITIAL &&
-            passwordInputFieldState.validationState != ValidationState.VALID
+    val hasError = passwordInputFieldState.validationState() == ValidationState.INVALID
     var showPassword by remember { mutableStateOf(false) }
 
     OutlinedSecureTextField(
@@ -180,10 +183,9 @@ fun PasswordTextField(
         supportingText = {
             if (hasError) {
                 Text(
-                    text = when (passwordInputFieldState.validationState) {
-                        ValidationState.EMPTY -> stringResource(R.string.error_password_empty)
+                    text = when (passwordInputFieldState.validationState()) {
                         ValidationState.INVALID -> stringResource(R.string.error_password_invalid)
-                        else -> ""
+                        ValidationState.INITIAL, ValidationState.VALID -> ""
                     },
                     color = MaterialTheme.colorScheme.error,
                 )
@@ -202,8 +204,8 @@ fun LoginSectionPreview(modifier: Modifier = Modifier) {
     Autosweep20Theme {
         Surface {
             LoginSection(
-                emailInputFieldState = InputFieldState(),
-                passwordInputFieldState = InputFieldState(),
+                emailInputFieldState = InputFieldState(validator =  emailStateValidator),
+                passwordInputFieldState = InputFieldState(validator = passwordStateValidator),
                 onLoginClicked = { _, _ -> },
                 onQuickBalanceClicked = {},
                 onForgotPasswordClicked = {},

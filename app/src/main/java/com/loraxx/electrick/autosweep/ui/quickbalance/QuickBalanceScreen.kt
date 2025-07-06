@@ -21,6 +21,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
@@ -30,9 +31,14 @@ import androidx.compose.material3.LargeFlexibleTopAppBar
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.stringResource
@@ -44,6 +50,8 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
+import com.loraxx.electrick.autosweep.ui.fields.ValidationState
+import com.loraxx.electrick.autosweep.ui.fields.accountNumberStateValidator
 import com.loraxx.electrick.autosweep.ui.login.AccountNumberTextField
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 import com.loraxx.electrick.autosweep.utils.toPhilippinePeso
@@ -62,6 +70,32 @@ fun QuickBalanceScreen(
         onCheckBalanceClick = { accountNumber -> viewModel.checkBalance(accountNumber) },
         navigateBack = navigateBack,
     )
+
+    var showDialog by remember { mutableStateOf(false) }
+
+    LaunchedEffect(uiState.showInvalidAccountError) {
+        if (uiState.showInvalidAccountError) {
+            showDialog = true
+        }
+        viewModel.onShowInvalidAccountErrorConsumed()
+    }
+
+    if (showDialog) {
+        AlertDialog(
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = stringResource(R.string.registration_account_not_found)) },
+            text = {
+                Text(text = stringResource(R.string.registration_account_not_found_description))
+            },
+            confirmButton = {
+                TextButton(
+                    onClick = { showDialog = false }
+                ) {
+                    Text(stringResource(R.string.button_label_okay))
+                }
+            }
+        )
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class, ExperimentalMaterial3ExpressiveApi::class)
@@ -109,6 +143,8 @@ fun QuickBalanceScreen(
                 .padding(contentPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
+            val isInputValid = accountNumberInputFieldState.validationState() == ValidationState.VALID
+
             Spacer(modifier = Modifier.height(48.dp))
 
             AccountBalanceSection(accountBalance = accountBalance)
@@ -130,6 +166,7 @@ fun QuickBalanceScreen(
 
             Button(
                 modifier = Modifier.fillMaxWidth(),
+                enabled = isInputValid,
                 onClick = {
                     onCheckBalanceClick(
                         accountNumberInputFieldState.textFieldState.text.toString(),
@@ -174,7 +211,6 @@ fun AccountBalanceSection(modifier: Modifier = Modifier, accountBalance: Double)
                 if (targetState > initialState) {
                     slideInVertically(animationSpec = bounceAnimationSpec) { width -> -width } + fadeIn() togetherWith
                             slideOutVertically { width -> width } + fadeOut()
-
                 } else {
                     slideInVertically(animationSpec = bounceAnimationSpec) { width -> width } + fadeIn() togetherWith
                             slideOutVertically { width -> -width } + fadeOut()
@@ -195,7 +231,7 @@ fun QuickBalancePreview(modifier: Modifier = Modifier) {
     Autosweep20Theme {
         QuickBalanceScreen(
             accountBalance = 1200.0,
-            accountNumberInputFieldState = InputFieldState(),
+            accountNumberInputFieldState = InputFieldState(validator = accountNumberStateValidator),
             onCheckBalanceClick = {},
             navigateBack = {},
         )
