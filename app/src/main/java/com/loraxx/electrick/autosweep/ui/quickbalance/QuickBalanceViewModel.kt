@@ -1,24 +1,18 @@
 package com.loraxx.electrick.autosweep.ui.quickbalance
 
-import androidx.compose.runtime.snapshotFlow
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.loraxx.electrick.autosweep.domain.model.BalanceResult
 import com.loraxx.electrick.autosweep.domain.repository.BalanceRepository
 import com.loraxx.electrick.autosweep.ui.fields.ValidationState
-import com.loraxx.electrick.autosweep.ui.fields.accountNumberStateValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.FlowPreview
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.debounce
-import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-@OptIn(FlowPreview::class)
 @HiltViewModel
 class QuickBalanceViewModel @Inject constructor(
     private val balanceRepository: BalanceRepository,
@@ -27,24 +21,8 @@ class QuickBalanceViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(QuickBalanceUiState())
     val uiState: StateFlow<QuickBalanceUiState> = _uiState.asStateFlow()
 
-    init {
-        viewModelScope.launch {
-            snapshotFlow { _uiState.value.accountNumberField.textFieldState.text }
-                .debounce(300L)
-                .distinctUntilChanged().collect { accountNumber ->
-                    _uiState.update { currentState ->
-                        currentState.copy(
-                            accountNumberField = currentState.accountNumberField.copy(
-                                validationState = accountNumberStateValidator(accountNumber.toString(), false),
-                            )
-                        )
-                    }
-                }
-        }
-    }
-
     fun checkBalance(accountNumber: String) {
-        if (isAccountNumberValid(accountNumber)) {
+        if (isAccountNumberValid()) {
             viewModelScope.launch {
                 _uiState.update { currentState ->
                     currentState.copy(isLoading = true)
@@ -63,9 +41,7 @@ class QuickBalanceViewModel @Inject constructor(
                             currentState.copy(
                                 isLoading = false,
                                 accountBalance = 0.0,
-                                accountNumberField = currentState.accountNumberField.copy(
-                                    validationState = ValidationState.INVALID,
-                                )
+                                showInvalidAccountError = true,
                             )
                         }
                     }
@@ -81,14 +57,13 @@ class QuickBalanceViewModel @Inject constructor(
         }
     }
 
-    private fun isAccountNumberValid(accountNumber: String): Boolean {
+    fun onShowInvalidAccountErrorConsumed() {
         _uiState.update { currentState ->
-            currentState.copy(
-                accountNumberField = currentState.accountNumberField.copy(
-                    validationState = accountNumberStateValidator(accountNumber, true),
-                )
-            )
+            currentState.copy(showInvalidAccountError = false)
         }
-        return _uiState.value.accountNumberField.validationState == ValidationState.VALID
+    }
+
+    private fun isAccountNumberValid(): Boolean {
+        return _uiState.value.accountNumberField.validationState() == ValidationState.VALID
     }
 }

@@ -5,7 +5,7 @@ import com.loraxx.electrick.autosweep.domain.model.RegistrationResult
 
 interface LoginRepository {
 
-    fun login(email: String, password: String): LoginResult
+    suspend fun login(email: String, password: String): LoginResult
 
-    fun register(accountNumber: String, plateNumber: String): RegistrationResult
+    suspend fun register(accountNumber: String, plateNumber: String): RegistrationResult
 }

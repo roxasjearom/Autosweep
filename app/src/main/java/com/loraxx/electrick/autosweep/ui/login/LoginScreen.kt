@@ -58,6 +58,10 @@ import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.domain.model.LoginResult
 import com.loraxx.electrick.autosweep.domain.model.RegistrationResult
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
+import com.loraxx.electrick.autosweep.ui.fields.accountNumberStateValidator
+import com.loraxx.electrick.autosweep.ui.fields.emailStateValidator
+import com.loraxx.electrick.autosweep.ui.fields.passwordStateValidator
+import com.loraxx.electrick.autosweep.ui.fields.plateNumberStateValidator
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 
 @Composable
@@ -79,6 +83,7 @@ fun LoginScreen(
             LoginResult.Success -> {
                 navigateToDashboard()
             }
+
             is LoginResult.Error -> {
                 val errorMessage = (loginUiState.loginResult as LoginResult.Error).message
                 Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
@@ -131,12 +136,8 @@ fun LoginScreen(
     }
     if (showDialog) {
         AlertDialog(
-            onDismissRequest = {
-                showDialog = false
-            },
-            title = {
-                Text(text = stringResource(R.string.registration_account_not_found))
-            },
+            onDismissRequest = { showDialog = false },
+            title = { Text(text = stringResource(R.string.registration_account_not_found)) },
             text = {
                 Text(text = stringResource(R.string.registration_account_not_found_description))
             },
@@ -186,7 +187,6 @@ fun LoginScreen(
     onSelectedIndexChange: (Int) -> Unit,
 ) {
     Scaffold(
-        modifier = Modifier.fillMaxSize(),
         bottomBar = {
             Row(
                 modifier = Modifier
@@ -349,10 +349,10 @@ fun LoginScreenPreview(modifier: Modifier = Modifier) {
     Autosweep20Theme {
         Surface {
             LoginScreen(
-                emailInputFieldState = InputFieldState(),
-                passwordInputFieldState = InputFieldState(),
-                accountNumberInputFieldState = InputFieldState(),
-                plateNumberInputFieldState = InputFieldState(),
+                emailInputFieldState = InputFieldState(validator = emailStateValidator),
+                passwordInputFieldState = InputFieldState(validator = passwordStateValidator),
+                accountNumberInputFieldState = InputFieldState(validator = accountNumberStateValidator),
+                plateNumberInputFieldState = InputFieldState(validator = plateNumberStateValidator),
                 selectedIndex = 0,
                 onLoginClicked = { _, _ -> },
                 onForgotPasswordClicked = {},
