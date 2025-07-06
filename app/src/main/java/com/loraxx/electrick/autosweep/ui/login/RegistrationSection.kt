@@ -42,13 +42,13 @@ fun RegistrationSection(
     plateNumberInputFieldState: InputFieldState,
     onRegisterClicked: (accountNumber: String, plateNumber: String) -> Unit,
 ) {
-    val areInputsValid = accountNumberInputFieldState.validationState() == ValidationState.VALID &&
-            plateNumberInputFieldState.validationState() == ValidationState.VALID
+    val areInputsValid =
+        accountNumberInputFieldState.isValid() && plateNumberInputFieldState.isValid()
+
     Column(
         modifier = modifier,
         horizontalAlignment = Alignment.CenterHorizontally,
     ) {
-
         AccountNumberTextField(
             modifier = Modifier.fillMaxWidth(),
             accountNumberInputFieldState = accountNumberInputFieldState,
@@ -94,7 +94,7 @@ fun AccountNumberTextField(
     imeAction: ImeAction = ImeAction.Next,
     onKeyboardActionClick: () -> Unit = { },
 ) {
-    val hasError = accountNumberInputFieldState.validationState() == ValidationState.INVALID
+    val hasError = accountNumberInputFieldState.getValidationState() == ValidationState.INVALID
 
     OutlinedTextField(
         state = accountNumberInputFieldState.textFieldState,
@@ -118,7 +118,7 @@ fun AccountNumberTextField(
         supportingText = {
             if (hasError) {
                 Text(
-                    text = when (accountNumberInputFieldState.validationState()) {
+                    text = when (accountNumberInputFieldState.getValidationState()) {
                         ValidationState.INVALID -> stringResource(R.string.error_account_number_invalid)
                         ValidationState.VALID, ValidationState.INITIAL -> ""
                     },
@@ -136,7 +136,7 @@ fun PlateNumberTextField(
     imeAction: ImeAction = ImeAction.Done,
     onKeyboardActionClick: () -> Unit = { },
 ) {
-    val hasError = plateNumberInputFieldState.validationState() == ValidationState.INVALID
+    val hasError = plateNumberInputFieldState.getValidationState() == ValidationState.INVALID
 
     OutlinedTextField(
         state = plateNumberInputFieldState.textFieldState,
@@ -158,7 +158,7 @@ fun PlateNumberTextField(
         supportingText = {
             if (hasError) {
                 Text(
-                    text = when (plateNumberInputFieldState.validationState()) {
+                    text = when (plateNumberInputFieldState.getValidationState()) {
                         ValidationState.INVALID -> stringResource(R.string.error_plate_number_invalid)
                         ValidationState.VALID, ValidationState.INITIAL -> ""
                     },

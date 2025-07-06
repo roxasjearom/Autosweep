@@ -11,8 +11,12 @@ data class InputFieldState(
     val textFieldState: TextFieldState = TextFieldState(),
     private val validator: StateValidator,
 ) {
-    fun validationState(): ValidationState {
+    fun getValidationState(): ValidationState {
         return validator(textFieldState.text.toString())
+    }
+
+    fun isValid(): Boolean {
+        return getValidationState() == ValidationState.VALID
     }
 }
 

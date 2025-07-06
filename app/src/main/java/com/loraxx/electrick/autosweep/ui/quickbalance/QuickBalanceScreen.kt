@@ -50,7 +50,6 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
-import com.loraxx.electrick.autosweep.ui.fields.ValidationState
 import com.loraxx.electrick.autosweep.ui.fields.accountNumberStateValidator
 import com.loraxx.electrick.autosweep.ui.login.AccountNumberTextField
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
@@ -143,7 +142,7 @@ fun QuickBalanceScreen(
                 .padding(contentPadding)
                 .padding(horizontal = 16.dp, vertical = 8.dp)
         ) {
-            val isInputValid = accountNumberInputFieldState.validationState() == ValidationState.VALID
+            val isInputValid = accountNumberInputFieldState.isValid()
 
             Spacer(modifier = Modifier.height(48.dp))
 
