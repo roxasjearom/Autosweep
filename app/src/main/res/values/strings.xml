@@ -43,4 +43,8 @@
 
     <string name="account_balance">Account Balance</string>
     <string name="dashboard_my_account">My account</string>
+    <string name="action_belt_rfid">RFID</string>
+    <string name="action_belt_traffic">Traffic</string>
+    <string name="action_belt_toll_rate">Toll Rate</string>
+    <string name="action_belt_help">Help</string>
 </resources>

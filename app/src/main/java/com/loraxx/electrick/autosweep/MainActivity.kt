@@ -1,6 +1,7 @@
 package com.loraxx.electrick.autosweep
 
 import android.os.Bundle
+import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
@@ -21,6 +22,7 @@ import androidx.navigation3.ui.rememberSceneSetupNavEntryDecorator
 import com.loraxx.electrick.autosweep.navigation.Dashboard
 import com.loraxx.electrick.autosweep.navigation.Login
 import com.loraxx.electrick.autosweep.navigation.QuickBalance
+import com.loraxx.electrick.autosweep.ui.dashboard.ActionBeltItem
 import com.loraxx.electrick.autosweep.ui.dashboard.DashboardScreen
 import com.loraxx.electrick.autosweep.ui.dashboard.DashboardViewModel
 import com.loraxx.electrick.autosweep.ui.login.LoginScreen
@@ -81,7 +83,30 @@ class MainActivity : ComponentActivity() {
                                     },
                                     onHistoryClick = {
                                         //TODO navigate to Transaction History screen
-                                    }
+                                    },
+                                    onActionBeltItemClick = { actionBeltItem ->
+                                        when (actionBeltItem) {
+                                            ActionBeltItem.RFID -> {
+                                                //TODO navigate to RFID screen
+                                                Toast.makeText(this@MainActivity, "Navigate to RFID screen", Toast.LENGTH_SHORT).show()
+                                            }
+
+                                            ActionBeltItem.TRAFFIC -> {
+                                                //TODO navigate to Traffic screen
+                                                Toast.makeText(this@MainActivity, "Navigate to Traffic screen", Toast.LENGTH_SHORT).show()
+                                            }
+
+                                            ActionBeltItem.TOLL_RATE -> {
+                                                //TODO navigate to Toll Rate screen
+                                                Toast.makeText(this@MainActivity, "Navigate to Toll Rate screen", Toast.LENGTH_SHORT).show()
+                                            }
+
+                                            ActionBeltItem.HELP -> {
+                                                //TODO navigate to Help screen
+                                                Toast.makeText(this@MainActivity, "Navigate to Help screen", Toast.LENGTH_SHORT).show()
+                                            }
+                                        }
+                                    },
                                 )
                             }
                         },
