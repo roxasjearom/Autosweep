@@ -13,9 +13,14 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Badge
+import androidx.compose.material3.BadgedBox
 import androidx.compose.material3.Button
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.FilledTonalIconButton
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -153,6 +158,72 @@ fun TopUpSection(
     }
 }
 
+@Composable
+fun ActionBeltSection(
+    modifier: Modifier = Modifier,
+    onActionBeltItemClick: (ActionBeltItem) -> Unit,
+) {
+    Row(
+        modifier = modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.SpaceBetween,
+    ) {
+        for (actionBeltItem in ActionBeltItem.entries) {
+            ActionBeltButton(
+                text = stringResource(actionBeltItem.labelId),
+                drawableId = actionBeltItem.drawableId,
+                showBadge = actionBeltItem.showBadge,
+                onClick = { onActionBeltItemClick(actionBeltItem) }
+            )
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun ActionBeltButton(
+    modifier: Modifier = Modifier,
+    text: String,
+    @DrawableRes drawableId: Int,
+    showBadge: Boolean = false,
+    onClick: () -> Unit
+) {
+    Column(
+        modifier = modifier,
+        horizontalAlignment = Alignment.CenterHorizontally,
+    ) {
+        FilledTonalIconButton(
+            modifier = Modifier.size(
+                IconButtonDefaults.mediumContainerSize(
+                    IconButtonDefaults.IconButtonWidthOption.Wide
+                )
+            ),
+            colors = IconButtonDefaults.filledTonalIconButtonColors()
+                .copy(
+                    containerColor = MaterialTheme.colorScheme.secondaryContainer,
+                    contentColor = MaterialTheme.colorScheme.onSecondaryContainer,
+                ),
+            shape = IconButtonDefaults.smallSquareShape,
+            onClick = onClick,
+            ) {
+            BadgedBox(
+                badge = { if (showBadge) Badge() }
+            ) {
+                Icon(
+                    modifier = Modifier.size(24.dp),
+                    painter = painterResource(drawableId),
+                    contentDescription = text,
+                )
+            }
+        }
+        Spacer(modifier = Modifier.height(4.dp))
+        Text(
+            text = text,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.primary,
+        )
+    }
+}
+
 @Preview
 @Composable
 fun AccountBalanceSectionPreview(modifier: Modifier = Modifier) {
@@ -165,6 +236,16 @@ fun AccountBalanceSectionPreview(modifier: Modifier = Modifier) {
             ),
             onTopUpClick = {},
             onHistoryClick = {},
+        )
+    }
+}
+
+@Preview
+@Composable
+fun ActionBeltIconPreview(modifier: Modifier = Modifier) {
+    Autosweep20Theme {
+        ActionBeltSection(
+            onActionBeltItemClick = {},
         )
     }
 }

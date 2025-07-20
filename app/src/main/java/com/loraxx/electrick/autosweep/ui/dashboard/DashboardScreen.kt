@@ -1,8 +1,9 @@
 package com.loraxx.electrick.autosweep.ui.dashboard
 
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.consumeWindowInsets
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
@@ -36,6 +37,7 @@ fun DashboardScreen(
     viewModel: DashboardViewModel,
     onTopUpClick: () -> Unit,
     onHistoryClick: () -> Unit,
+    onActionBeltItemClick: (ActionBeltItem) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     DashboardScreen(
@@ -46,7 +48,8 @@ fun DashboardScreen(
         onHistoryClick = onHistoryClick,
         onRefresh = {
             viewModel.fetchBalanceDetails()
-        }
+        },
+        onActionBeltItemClick = onActionBeltItemClick,
     )
 }
 
@@ -59,6 +62,7 @@ fun DashboardScreen(
     onTopUpClick: () -> Unit,
     onHistoryClick: () -> Unit,
     onRefresh: () -> Unit,
+    onActionBeltItemClick: (ActionBeltItem) -> Unit,
 ) {
     val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
     Scaffold(
@@ -100,13 +104,17 @@ fun DashboardScreen(
                     .padding(horizontal = 16.dp)
                     .verticalScroll(rememberScrollState()),
             ) {
-                Box(contentAlignment = Alignment.TopCenter) {
-                    AccountBalanceSection(
-                        balanceDetails = balanceDetails,
-                        onTopUpClick = onTopUpClick,
-                        onHistoryClick = onHistoryClick,
-                    )
-                }
+                AccountBalanceSection(
+                    balanceDetails = balanceDetails,
+                    onTopUpClick = onTopUpClick,
+                    onHistoryClick = onHistoryClick,
+                )
+
+                Spacer(modifier = Modifier.height(16.dp))
+                
+                ActionBeltSection(
+                    onActionBeltItemClick = onActionBeltItemClick,
+                )
             }
         }
     }
@@ -126,6 +134,7 @@ fun DashboardScreenPreview(modifier: Modifier = Modifier) {
             onTopUpClick = {},
             onHistoryClick = {},
             onRefresh = {},
+            onActionBeltItemClick = {},
         )
     }
 }
