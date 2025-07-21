@@ -143,10 +143,12 @@ fun TopUpSection(
         Spacer(modifier = Modifier.width(8.dp))
 
         IconButton(
-            modifier = Modifier.background(
-                color = MaterialTheme.colorScheme.secondary,
-                shape = CircleShape
-            ),
+            modifier = Modifier
+                .background(
+                    color = MaterialTheme.colorScheme.secondary,
+                    shape = CircleShape,
+                )
+                .size(40.dp),
             onClick = onHistoryClick
         ) {
             Icon(
@@ -204,7 +206,7 @@ fun ActionBeltButton(
                 ),
             shape = IconButtonDefaults.smallSquareShape,
             onClick = onClick,
-            ) {
+        ) {
             BadgedBox(
                 badge = { if (showBadge) Badge() }
             ) {

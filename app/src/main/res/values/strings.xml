@@ -47,4 +47,8 @@
     <string name="action_belt_traffic">Traffic</string>
     <string name="action_belt_toll_rate">Toll Rate</string>
     <string name="action_belt_help">Help</string>
+
+    <string name="dashboard_tab_home">Home</string>
+    <string name="dashboard_tab_calculator">Calculator</string>
+    <string name="dashboard_tab_account">Account</string>
 </resources>
