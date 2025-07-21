@@ -23,7 +23,7 @@ import com.loraxx.electrick.autosweep.navigation.Dashboard
 import com.loraxx.electrick.autosweep.navigation.Login
 import com.loraxx.electrick.autosweep.navigation.QuickBalance
 import com.loraxx.electrick.autosweep.ui.dashboard.ActionBeltItem
-import com.loraxx.electrick.autosweep.ui.dashboard.DashboardScreen
+import com.loraxx.electrick.autosweep.ui.dashboard.DashboardMainScreen
 import com.loraxx.electrick.autosweep.ui.dashboard.DashboardViewModel
 import com.loraxx.electrick.autosweep.ui.login.LoginScreen
 import com.loraxx.electrick.autosweep.ui.login.LoginViewModel
@@ -76,7 +76,7 @@ class MainActivity : ComponentActivity() {
                             }
                             entry<Dashboard> {
                                 val dashboardViewModel: DashboardViewModel = hiltViewModel()
-                                DashboardScreen(
+                                DashboardMainScreen(
                                     viewModel = dashboardViewModel,
                                     onTopUpClick = {
                                         //TODO navigate to Top up screen
