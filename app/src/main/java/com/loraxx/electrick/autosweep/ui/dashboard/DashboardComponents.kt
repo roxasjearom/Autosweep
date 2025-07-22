@@ -1,6 +1,7 @@
 package com.loraxx.electrick.autosweep.ui.dashboard
 
 import androidx.annotation.DrawableRes
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -226,6 +227,30 @@ fun ActionBeltButton(
     }
 }
 
+@Composable
+fun TrafficAdvisorySection(modifier: Modifier = Modifier, advisoryMessage: String) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(12.dp))
+            .background(MaterialTheme.colorScheme.errorContainer)
+            .padding(16.dp),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Image(
+            painter = painterResource(id = R.drawable.ic_traffic_advisory),
+            contentDescription = "Traffic advisory",
+            modifier = Modifier.size(32.dp),
+        )
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            text = advisoryMessage,
+            style = MaterialTheme.typography.labelSmall,
+            color = MaterialTheme.colorScheme.onErrorContainer,
+        )
+    }
+}
+
 @Preview
 @Composable
 fun AccountBalanceSectionPreview(modifier: Modifier = Modifier) {
@@ -249,5 +274,13 @@ fun ActionBeltIconPreview(modifier: Modifier = Modifier) {
         ActionBeltSection(
             onActionBeltItemClick = {},
         )
+    }
+}
+
+@Preview
+@Composable
+fun TrafficAdvisoryPreview(modifier: Modifier = Modifier) {
+    Autosweep20Theme {
+        TrafficAdvisorySection(advisoryMessage = "TRAFFIC ADVISORY: Expect delays on TPLEX due to an ongoing incident. Drive safe!")
     }
 }

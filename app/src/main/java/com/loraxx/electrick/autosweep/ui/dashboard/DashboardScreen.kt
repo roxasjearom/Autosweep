@@ -1,5 +1,8 @@
 package com.loraxx.electrick.autosweep.ui.dashboard
 
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.scaleIn
+import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
@@ -46,6 +49,7 @@ import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.domain.model.BalanceDetails
+import com.loraxx.electrick.autosweep.domain.model.TrafficAdvisory
 import com.loraxx.electrick.autosweep.navigation.AccountTab
 import com.loraxx.electrick.autosweep.navigation.CalculatorTab
 import com.loraxx.electrick.autosweep.navigation.HomeTab
@@ -170,10 +174,12 @@ fun DashboardScreen(
         modifier = modifier,
         isRefreshing = uiState.isLoading,
         balanceDetails = uiState.balanceDetails,
+        trafficAdvisory = uiState.trafficAdvisory,
         onTopUpClick = onTopUpClick,
         onHistoryClick = onHistoryClick,
         onRefresh = {
             viewModel.fetchBalanceDetails()
+            viewModel.fetchTrafficAdvisory()
         },
         onActionBeltItemClick = onActionBeltItemClick,
     )
@@ -185,6 +191,7 @@ fun DashboardScreen(
     modifier: Modifier = Modifier,
     isRefreshing: Boolean,
     balanceDetails: BalanceDetails,
+    trafficAdvisory: TrafficAdvisory,
     onTopUpClick: () -> Unit,
     onHistoryClick: () -> Unit,
     onRefresh: () -> Unit,
@@ -241,6 +248,17 @@ fun DashboardScreen(
                 ActionBeltSection(
                     onActionBeltItemClick = onActionBeltItemClick,
                 )
+
+                AnimatedVisibility(
+                    visible = trafficAdvisory.hasAdvisory,
+                    enter = scaleIn(),
+                    exit = scaleOut(),
+                ) {
+                    Column {
+                        Spacer(modifier = Modifier.height(16.dp))
+                        TrafficAdvisorySection(advisoryMessage = trafficAdvisory.advisoryMessage)
+                    }
+                }
             }
         }
     }
@@ -256,6 +274,7 @@ fun DashboardScreenPreview(modifier: Modifier = Modifier) {
                 accountNumber = "123456789",
                 accountBalance = 1200.0
             ),
+            trafficAdvisory = TrafficAdvisory(true, "Traffic advisory message"),
             isRefreshing = true,
             onTopUpClick = {},
             onHistoryClick = {},
