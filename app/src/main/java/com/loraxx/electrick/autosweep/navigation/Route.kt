@@ -20,15 +20,6 @@ sealed interface TopLevelRoute {
     fun getIcon(isSelected: Boolean): ImageVector = if (isSelected) selectedIcon else unselectedIcon
 }
 
-@Serializable
-data object Login : NavKey
-
-@Serializable
-data object QuickBalance : NavKey
-
-@Serializable
-data object Dashboard : NavKey
-
 //Dashboard tabs
 @Serializable
 data object HomeTab : NavKey, TopLevelRoute {
@@ -50,3 +41,31 @@ data object AccountTab : NavKey, TopLevelRoute {
     override val unselectedIcon = Icons.Outlined.Person
     override val selectedIcon = Icons.Filled.Person
 }
+@Serializable
+data object Login : NavKey
+
+@Serializable
+data object QuickBalance : NavKey
+
+@Serializable
+data object Dashboard : NavKey
+
+//Dashboard subscreens
+@Serializable
+data object TopUp : NavKey
+
+@Serializable
+data object Transaction : NavKey
+
+//Dashboard Action Belt screens
+@Serializable
+data object Rfid : NavKey
+
+@Serializable
+data object Traffic : NavKey
+
+@Serializable
+data object TollRate : NavKey
+
+@Serializable
+data object Help : NavKey
