@@ -48,4 +48,8 @@ class TopLevelBackStack<T : Any>(startKey: T) {
         topLevelKey = topLevelStacks.keys.last()
         updateBackStack()
     }
+
+    fun showNavigationIcon(): Boolean {
+        return (topLevelStacks[topLevelKey]?.size ?: 0) > 1
+    }
 }

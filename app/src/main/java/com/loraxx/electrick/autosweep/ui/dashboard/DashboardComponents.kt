@@ -45,7 +45,7 @@ fun AccountBalanceSection(
     modifier: Modifier = Modifier,
     balanceDetails: BalanceDetails,
     onTopUpClick: () -> Unit,
-    onHistoryClick: () -> Unit,
+    onTransactionClick: () -> Unit,
 ) {
     Column(
         modifier = modifier
@@ -87,7 +87,7 @@ fun AccountBalanceSection(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        TopUpSection(onTopUpClick = onTopUpClick, onHistoryClick = onHistoryClick)
+        TopUpSection(onTopUpClick = onTopUpClick, onTransactionClick = onTransactionClick)
     }
 }
 
@@ -125,7 +125,7 @@ fun TextWithIcon(
 fun TopUpSection(
     modifier: Modifier = Modifier,
     onTopUpClick: () -> Unit,
-    onHistoryClick: () -> Unit,
+    onTransactionClick: () -> Unit,
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -150,7 +150,7 @@ fun TopUpSection(
                     shape = CircleShape,
                 )
                 .size(40.dp),
-            onClick = onHistoryClick
+            onClick = onTransactionClick
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_transaction_history),
@@ -253,7 +253,7 @@ fun TrafficAdvisorySection(modifier: Modifier = Modifier, advisoryMessage: Strin
 
 @Preview
 @Composable
-fun AccountBalanceSectionPreview(modifier: Modifier = Modifier) {
+fun AccountBalanceSectionPreview() {
     Autosweep20Theme {
         AccountBalanceSection(
             balanceDetails = BalanceDetails(
@@ -262,14 +262,14 @@ fun AccountBalanceSectionPreview(modifier: Modifier = Modifier) {
                 accountBalance = 1200.0
             ),
             onTopUpClick = {},
-            onHistoryClick = {},
+            onTransactionClick = {},
         )
     }
 }
 
 @Preview
 @Composable
-fun ActionBeltIconPreview(modifier: Modifier = Modifier) {
+fun ActionBeltIconPreview() {
     Autosweep20Theme {
         ActionBeltSection(
             onActionBeltItemClick = {},
@@ -279,7 +279,7 @@ fun ActionBeltIconPreview(modifier: Modifier = Modifier) {
 
 @Preview
 @Composable
-fun TrafficAdvisoryPreview(modifier: Modifier = Modifier) {
+fun TrafficAdvisoryPreview() {
     Autosweep20Theme {
         TrafficAdvisorySection(advisoryMessage = "TRAFFIC ADVISORY: Expect delays on TPLEX due to an ongoing incident. Drive safe!")
     }
