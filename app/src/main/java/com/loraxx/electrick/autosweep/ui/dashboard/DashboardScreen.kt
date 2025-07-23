@@ -4,22 +4,15 @@ import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.scaleIn
 import androidx.compose.animation.scaleOut
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.consumeWindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Calculate
-import androidx.compose.material.icons.filled.Home
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.outlined.Calculate
-import androidx.compose.material.icons.outlined.Home
-import androidx.compose.material.icons.outlined.Person
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -54,110 +47,110 @@ import com.loraxx.electrick.autosweep.navigation.AccountTab
 import com.loraxx.electrick.autosweep.navigation.CalculatorTab
 import com.loraxx.electrick.autosweep.navigation.HomeTab
 import com.loraxx.electrick.autosweep.navigation.TopLevelBackStack
-import com.loraxx.electrick.autosweep.navigation.TopLevelRoute
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 
-@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
-fun DashboardMainScreen(
+fun DashboardContainerScreen(
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel,
     onTopUpClick: () -> Unit,
     onHistoryClick: () -> Unit,
     onActionBeltItemClick: (ActionBeltItem) -> Unit,
 ) {
-    val topLevelRoutes = listOf(
-        TopLevelRoute(
-            stringResource(R.string.dashboard_tab_home),
-            HomeTab,
-            Icons.Outlined.Home,
-            Icons.Filled.Home
-        ),
-        TopLevelRoute(
-            stringResource(R.string.dashboard_tab_calculator),
-            CalculatorTab,
-            Icons.Outlined.Calculate,
-            Icons.Filled.Calculate,
-        ),
-        TopLevelRoute(
-            stringResource(R.string.dashboard_tab_account),
-            AccountTab,
-            Icons.Outlined.Person,
-            Icons.Filled.Person,
-        ),
-    )
+    val topLevelRoutes = listOf(HomeTab, CalculatorTab, AccountTab)
     val topLevelBackStack = remember { TopLevelBackStack<Any>(HomeTab) }
+    val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
-        bottomBar = {
+        modifier = Modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
+        topBar = {
+            TopAppBar(
+                title = {
+                    Text(
+                        text = stringResource(R.string.dashboard_my_account),
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis,
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.primary,
+                    )
+                },
+                scrollBehavior = scrollBehavior,
+            )
+        },
+
+        ) { paddingValues ->
+        Box(
+            modifier = Modifier
+                .padding(paddingValues)
+                .fillMaxSize()
+        ) {
+            NavDisplay(
+                backStack = topLevelBackStack.backStack,
+                onBack = { topLevelBackStack.removeLast() },
+                entryProvider = entryProvider {
+                    entry<HomeTab> {
+                        DashboardScreen(
+                            viewModel = viewModel,
+                            onTopUpClick = onTopUpClick,
+                            onHistoryClick = onHistoryClick,
+                            onActionBeltItemClick = onActionBeltItemClick,
+                        )
+                    }
+                    entry<CalculatorTab> {
+                        Column(
+                            modifier = modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = "Calculator screen",
+                                style = MaterialTheme.typography.headlineMedium,
+                            )
+                        }
+                    }
+                    entry<AccountTab> {
+                        Column(
+                            modifier = modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = "Account screen",
+                                style = MaterialTheme.typography.headlineMedium,
+                            )
+                        }
+                    }
+                },
+            )
+
             HorizontalFloatingToolbar(
                 expanded = true,
-                modifier = Modifier.padding(horizontal = 40.dp),
+                modifier = modifier
+                    .align(Alignment.BottomCenter)
+                    .height(72.dp)
+                    .padding(horizontal = 40.dp),
                 shape = RoundedCornerShape(16.dp),
                 content = {
                     topLevelRoutes.forEach { topLevelRoute ->
-                        val isSelected = topLevelRoute.route == topLevelBackStack.topLevelKey
+                        val isSelected = topLevelRoute == topLevelBackStack.topLevelKey
                         NavigationBarItem(
                             icon = {
                                 Icon(
-                                    if (isSelected) {
-                                        topLevelRoute.selectedIcon
-                                    } else {
-                                        topLevelRoute.unselectedIcon
-                                    },
-                                    contentDescription = topLevelRoute.name
+                                    imageVector = topLevelRoute.getIcon(isSelected),
+                                    contentDescription = stringResource(topLevelRoute.nameId)
                                 )
                             },
-                            label = { Text(topLevelRoute.name) },
+                            label = { Text(stringResource(topLevelRoute.nameId)) },
                             selected = isSelected,
                             onClick = {
-                                topLevelBackStack.addTopLevel(topLevelRoute.route)
+                                topLevelBackStack.addTopLevel(topLevelRoute)
                             }
                         )
                     }
                 },
             )
         }
-    ) { paddingValues ->
-        NavDisplay(
-            modifier = Modifier.padding(paddingValues),
-            backStack = topLevelBackStack.backStack,
-            onBack = { topLevelBackStack.removeLast() },
-            entryProvider = entryProvider {
-                entry<HomeTab> {
-                    DashboardScreen(
-                        viewModel = viewModel,
-                        onTopUpClick = onTopUpClick,
-                        onHistoryClick = onHistoryClick,
-                        onActionBeltItemClick = onActionBeltItemClick,
-                    )
-                }
-                entry<CalculatorTab> {
-                    Column(
-                        modifier = modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            text = "Calculator screen",
-                            style = MaterialTheme.typography.headlineMedium,
-                        )
-                    }
-                }
-                entry<AccountTab> {
-                    Column(
-                        modifier = modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                    ) {
-                        Text(
-                            text = "Account screen",
-                            style = MaterialTheme.typography.headlineMedium,
-                        )
-                    }
-                }
-            },
-        )
     }
 }
 
@@ -197,67 +190,46 @@ fun DashboardScreen(
     onRefresh: () -> Unit,
     onActionBeltItemClick: (ActionBeltItem) -> Unit,
 ) {
-    val scrollBehavior = TopAppBarDefaults.pinnedScrollBehavior()
-    Scaffold(
-        modifier = modifier.nestedScroll(scrollBehavior.nestedScrollConnection),
-        topBar = {
-            TopAppBar(
-                title = {
-                    Text(
-                        text = stringResource(R.string.dashboard_my_account),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
-                },
-                scrollBehavior = scrollBehavior,
+    val state = rememberPullToRefreshState()
+
+    PullToRefreshBox(
+        modifier = modifier,
+        isRefreshing = isRefreshing,
+        onRefresh = onRefresh,
+        state = state,
+        indicator = {
+            PullToRefreshDefaults.LoadingIndicator(
+                state = state,
+                isRefreshing = isRefreshing,
+                modifier = Modifier.align(Alignment.TopCenter),
             )
-        },
-    ) { contentPadding ->
-        val state = rememberPullToRefreshState()
-
-        PullToRefreshBox(
+        }
+    ) {
+        Column(
             modifier = Modifier
-                .consumeWindowInsets(contentPadding)
-                .padding(contentPadding),
-            isRefreshing = isRefreshing,
-            onRefresh = onRefresh,
-            state = state,
-            indicator = {
-                PullToRefreshDefaults.LoadingIndicator(
-                    state = state,
-                    isRefreshing = isRefreshing,
-                    modifier = Modifier.align(Alignment.TopCenter),
-                )
-            }
+                .padding(horizontal = 16.dp)
+                .verticalScroll(rememberScrollState()),
         ) {
-            Column(
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .verticalScroll(rememberScrollState()),
+            AccountBalanceSection(
+                balanceDetails = balanceDetails,
+                onTopUpClick = onTopUpClick,
+                onHistoryClick = onHistoryClick,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            ActionBeltSection(
+                onActionBeltItemClick = onActionBeltItemClick,
+            )
+
+            AnimatedVisibility(
+                visible = trafficAdvisory.hasAdvisory,
+                enter = scaleIn(),
+                exit = scaleOut(),
             ) {
-                AccountBalanceSection(
-                    balanceDetails = balanceDetails,
-                    onTopUpClick = onTopUpClick,
-                    onHistoryClick = onHistoryClick,
-                )
-
-                Spacer(modifier = Modifier.height(16.dp))
-
-                ActionBeltSection(
-                    onActionBeltItemClick = onActionBeltItemClick,
-                )
-
-                AnimatedVisibility(
-                    visible = trafficAdvisory.hasAdvisory,
-                    enter = scaleIn(),
-                    exit = scaleOut(),
-                ) {
-                    Column {
-                        Spacer(modifier = Modifier.height(16.dp))
-                        TrafficAdvisorySection(advisoryMessage = trafficAdvisory.advisoryMessage)
-                    }
+                Column {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    TrafficAdvisorySection(advisoryMessage = trafficAdvisory.advisoryMessage)
                 }
             }
         }
@@ -266,7 +238,7 @@ fun DashboardScreen(
 
 @Preview
 @Composable
-fun DashboardScreenPreview(modifier: Modifier = Modifier) {
+fun DashboardScreenPreview() {
     Autosweep20Theme {
         DashboardScreen(
             balanceDetails = BalanceDetails(
