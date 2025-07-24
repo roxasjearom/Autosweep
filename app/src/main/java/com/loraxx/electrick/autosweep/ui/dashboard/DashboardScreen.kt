@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.loraxx.electrick.autosweep.domain.model.BalanceDetails
+import com.loraxx.electrick.autosweep.domain.model.NewsItem
 import com.loraxx.electrick.autosweep.domain.model.TrafficAdvisory
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 
@@ -39,6 +40,7 @@ fun DashboardScreen(
         isRefreshing = uiState.isLoading,
         balanceDetails = uiState.balanceDetails,
         trafficAdvisory = uiState.trafficAdvisory,
+        newsItems = uiState.newsItems,
         onTopUpClick = onTopUpClick,
         onTransactionClick = onTransactionClick,
         onRefresh = {
@@ -56,6 +58,7 @@ fun DashboardScreen(
     isRefreshing: Boolean,
     balanceDetails: BalanceDetails,
     trafficAdvisory: TrafficAdvisory,
+    newsItems: List<NewsItem>,
     onTopUpClick: () -> Unit,
     onTransactionClick: () -> Unit,
     onRefresh: () -> Unit,
@@ -103,6 +106,17 @@ fun DashboardScreen(
                     TrafficAdvisorySection(advisoryMessage = trafficAdvisory.advisoryMessage)
                 }
             }
+
+            AnimatedVisibility(
+                visible = newsItems.isNotEmpty(),
+                enter = scaleIn(),
+                exit = scaleOut(),
+            ) {
+                Column {
+                    Spacer(modifier = Modifier.height(16.dp))
+                    NewsAndUpdateSection(newsItems = newsItems)
+                }
+            }
         }
     }
 }
@@ -118,6 +132,18 @@ fun DashboardScreenPreview() {
                 accountBalance = 1200.0
             ),
             trafficAdvisory = TrafficAdvisory(true, "Traffic advisory message"),
+            newsItems = listOf(
+                NewsItem(
+                    newsId = 1,
+                    title = "New DOTr Secretary suspends ‘No RFID, No entry’ on expressways",
+                    imageUrl = "https://picsum.photos/200/300",
+                ),
+                NewsItem(
+                    newsId = 2,
+                    title = "Why isn’t my RFID sticker being read properly",
+                    imageUrl = "https://picsum.photos/200/300",
+                ),
+            ),
             isRefreshing = true,
             onTopUpClick = {},
             onTransactionClick = {},
