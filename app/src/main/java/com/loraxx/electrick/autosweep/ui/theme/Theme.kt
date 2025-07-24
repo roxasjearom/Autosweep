@@ -42,6 +42,10 @@ private val LightColorScheme = lightColorScheme(
     surfaceContainer = surfaceContainerLight,
     surfaceContainerHigh = surfaceContainerHighLight,
     surfaceContainerHighest = surfaceContainerHighestLight,
+    secondaryFixed = secondaryFixedLight,
+    onSecondaryFixed = onSecondaryFixedLight,
+    tertiaryFixed = tertiaryFixedLight,
+    onTertiaryFixed = onTertiaryFixedLight,
 )
 
 private val DarkColorScheme = darkColorScheme(
