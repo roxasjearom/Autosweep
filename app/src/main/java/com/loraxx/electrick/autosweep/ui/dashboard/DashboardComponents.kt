@@ -62,8 +62,8 @@ fun AccountBalanceSection(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(MaterialTheme.colorScheme.secondaryContainer)
+            .clip(RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(16.dp)
     ) {
         Row(
@@ -80,7 +80,7 @@ fun AccountBalanceSection(
             Text(
                 text = balanceDetails.accountNumber,
                 style = MaterialTheme.typography.titleSmall,
-                color = MaterialTheme.colorScheme.primary,
+                color = MaterialTheme.colorScheme.onPrimary,
             )
         }
 
@@ -89,12 +89,12 @@ fun AccountBalanceSection(
         Text(
             text = balanceDetails.accountBalance.toPhilippinePeso(),
             style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Normal),
-            color = MaterialTheme.colorScheme.primary,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
         Text(
             text = stringResource(R.string.account_balance),
             style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onSecondaryContainer,
+            color = MaterialTheme.colorScheme.onPrimary,
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -109,8 +109,8 @@ fun TextWithIcon(
     @DrawableRes iconId: Int,
     modifier: Modifier = Modifier,
     iconSize: Dp = 16.dp,
-    containerColor: Color = MaterialTheme.colorScheme.tertiaryContainer,
-    contentColor: Color = MaterialTheme.colorScheme.onTertiary,
+    containerColor: Color = MaterialTheme.colorScheme.tertiaryFixed,
+    contentColor: Color = MaterialTheme.colorScheme.onTertiaryFixed,
 ) {
     Row(
         modifier = modifier
@@ -158,7 +158,7 @@ fun TopUpSection(
         IconButton(
             modifier = Modifier
                 .background(
-                    color = MaterialTheme.colorScheme.secondary,
+                    color = MaterialTheme.colorScheme.secondaryFixed,
                     shape = CircleShape,
                 )
                 .size(40.dp),
@@ -167,7 +167,7 @@ fun TopUpSection(
             Icon(
                 painter = painterResource(R.drawable.ic_transaction_history),
                 contentDescription = stringResource(R.string.cd_transaction_history),
-                tint = MaterialTheme.colorScheme.onSecondary,
+                tint = MaterialTheme.colorScheme.onSecondaryFixed,
             )
         }
     }

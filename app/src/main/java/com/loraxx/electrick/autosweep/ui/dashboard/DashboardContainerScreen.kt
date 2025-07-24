@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.material.icons.filled.PersonAdd
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
 import androidx.compose.material3.HorizontalFloatingToolbar
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavKey
@@ -80,6 +82,17 @@ fun DashboardContainerScreen(
                         }
                     }
                 },
+                actions = {
+                    IconButton(onClick = {
+                        //TODO navigate to Add account screen
+                    }) {
+                        Icon(
+                            imageVector = Icons.Filled.PersonAdd,
+                            contentDescription = "Add account",
+                            tint = MaterialTheme.colorScheme.primary,
+                        )
+                    }
+                }
             )
         },
     ) { paddingValues ->
@@ -227,7 +240,13 @@ fun DashboardContainerScreen(
                                     contentDescription = stringResource(topLevelRoute.nameId)
                                 )
                             },
-                            label = { Text(stringResource(topLevelRoute.nameId)) },
+                            label = {
+                                Text(
+                                    text = stringResource(topLevelRoute.nameId),
+                                    fontWeight = FontWeight.Medium,
+                                    style = MaterialTheme.typography.labelMedium,
+                                )
+                            },
                             selected = isSelected,
                             onClick = {
                                 topLevelBackStack.addTopLevel(topLevelRoute)
