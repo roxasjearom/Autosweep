@@ -23,6 +23,7 @@ class DashboardViewModel @Inject constructor(
     init {
         fetchBalanceDetails()
         fetchTrafficAdvisory()
+        fetchNews()
     }
 
     fun fetchBalanceDetails() {
@@ -52,6 +53,17 @@ class DashboardViewModel @Inject constructor(
             _uiState.update { currentState ->
                 currentState.copy(
                     trafficAdvisory = trafficAdvisory,
+                )
+            }
+        }
+    }
+
+    fun fetchNews() {
+        viewModelScope.launch {
+            val newsItems = dashboardRepository.getNews()
+            _uiState.update { currentState ->
+                currentState.copy(
+                    newsItems = newsItems,
                 )
             }
         }

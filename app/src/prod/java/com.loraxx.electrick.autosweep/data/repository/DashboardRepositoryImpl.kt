@@ -1,6 +1,7 @@
 package com.loraxx.electrick.autosweep.data.repository
 
 import com.loraxx.electrick.autosweep.domain.model.BalanceDetails
+import com.loraxx.electrick.autosweep.domain.model.NewsItem
 import com.loraxx.electrick.autosweep.domain.model.TrafficAdvisory
 import com.loraxx.electrick.autosweep.domain.repository.DashboardRepository
 import kotlinx.coroutines.delay
@@ -21,6 +22,26 @@ class DashboardRepositoryImpl @Inject constructor(): DashboardRepository {
         return TrafficAdvisory(
             hasAdvisory = true,
             advisoryMessage = "TRAFFIC ADVISORY: Expect delays on TPLEX due to an ongoing incident. Drive safe!",
+        )
+    }
+
+    override suspend fun getNews(): List<NewsItem> {
+        return listOf(
+            NewsItem(
+                newsId = 1,
+                title = "New DOTr Secretary suspends ‘No RFID, No entry’ on expressways",
+                imageUrl = "https://picsum.photos/200/300",
+            ),
+            NewsItem(
+                newsId = 2,
+                title = "Why isn’t my RFID sticker being read properly",
+                imageUrl = "https://picsum.photos/200/300",
+            ),
+            NewsItem(
+                newsId = 3,
+                title = "Incoming toll increase by the end of year",
+                imageUrl = "https://picsum.photos/200/300",
+            ),
         )
     }
 }
