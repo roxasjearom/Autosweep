@@ -51,4 +51,11 @@
     <string name="dashboard_tab_home">Home</string>
     <string name="dashboard_tab_calculator">Calculator</string>
     <string name="dashboard_tab_account">Account</string>
+    <string name="top_up_bottom_sheet_header">How would you like to top up?</string>
+    <string name="bank_account_name">Bank account</string>
+    <string name="bank_account_description">Link your bank account</string>
+    <string name="e_wallet_name">E-wallet</string>
+    <string name="e_wallet_description">Cash in from Gcash, Maya, or GrabPay</string>
+    <string name="credit_card_name">Credit card</string>
+    <string name="credit_card_description">Cash in using a new card</string>
 </resources>

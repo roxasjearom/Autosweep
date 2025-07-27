@@ -108,9 +108,7 @@ fun DashboardContainerScreen(
                     entry<HomeTab> {
                         DashboardScreen(
                             viewModel = viewModel,
-                            onTopUpClick = {
-                                topLevelBackStack.add(TopUp)
-                            },
+                            onTopUpOptionClick = { topLevelBackStack.add(TopUp) },
                             onTransactionClick = {
                                 topLevelBackStack.add(Transaction)
                             },
