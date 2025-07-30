@@ -43,8 +43,14 @@ import com.loraxx.electrick.autosweep.navigation.Rfid
 import com.loraxx.electrick.autosweep.navigation.TollRate
 import com.loraxx.electrick.autosweep.navigation.TopLevelBackStack
 import com.loraxx.electrick.autosweep.navigation.TopUp
+import com.loraxx.electrick.autosweep.navigation.CreditCardInput
+import com.loraxx.electrick.autosweep.navigation.SelectBank
+import com.loraxx.electrick.autosweep.navigation.SelectEWallet
 import com.loraxx.electrick.autosweep.navigation.Traffic
 import com.loraxx.electrick.autosweep.navigation.Transaction
+import com.loraxx.electrick.autosweep.ui.topup.TopUpOption
+import com.loraxx.electrick.autosweep.ui.topup.bank.BankTopUpScreen
+import com.loraxx.electrick.autosweep.ui.topup.bank.BankTopUp
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -61,17 +67,19 @@ fun DashboardContainerScreen(
         topBar = {
             TopAppBar(
                 title = {
-                    Text(
-                        text = stringResource(R.string.dashboard_my_account),
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis,
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.primary,
-                    )
+                    if (!topLevelBackStack.hasMultipleItems()) {
+                        Text(
+                            text = stringResource(R.string.dashboard_my_account),
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            style = MaterialTheme.typography.titleLarge,
+                            color = MaterialTheme.colorScheme.primary,
+                        )
+                    }
                 },
                 scrollBehavior = scrollBehavior,
                 navigationIcon = {
-                    if (topLevelBackStack.showNavigationIcon()) {
+                    if (topLevelBackStack.hasMultipleItems()) {
                         IconButton(onClick = {
                             topLevelBackStack.removeLast()
                         }) {
@@ -83,14 +91,16 @@ fun DashboardContainerScreen(
                     }
                 },
                 actions = {
-                    IconButton(onClick = {
-                        //TODO navigate to Add account screen
-                    }) {
-                        Icon(
-                            imageVector = Icons.Filled.PersonAdd,
-                            contentDescription = "Add account",
-                            tint = MaterialTheme.colorScheme.primary,
-                        )
+                    if (!topLevelBackStack.hasMultipleItems()) {
+                        IconButton(onClick = {
+                            //TODO navigate to Add account screen
+                        }) {
+                            Icon(
+                                imageVector = Icons.Filled.PersonAdd,
+                                contentDescription = "Add account",
+                                tint = MaterialTheme.colorScheme.primary,
+                            )
+                        }
                     }
                 }
             )
@@ -108,7 +118,19 @@ fun DashboardContainerScreen(
                     entry<HomeTab> {
                         DashboardScreen(
                             viewModel = viewModel,
-                            onTopUpOptionClick = { topLevelBackStack.add(TopUp) },
+                            onTopUpOptionClick = { selectedTopUp ->
+                                when (selectedTopUp) {
+                                    TopUpOption.BANK_ACCOUNT -> {
+                                        topLevelBackStack.add(SelectBank)
+                                    }
+                                    TopUpOption.E_WALLET -> {
+                                        topLevelBackStack.add(SelectEWallet)
+                                    }
+                                    TopUpOption.CREDIT_CARD -> {
+                                        topLevelBackStack.add(CreditCardInput)
+                                    }
+                                }
+                            },
                             onTransactionClick = {
                                 topLevelBackStack.add(Transaction)
                             },
@@ -214,6 +236,38 @@ fun DashboardContainerScreen(
                         ) {
                             Text(
                                 text = "Help screen",
+                                style = MaterialTheme.typography.headlineMedium,
+                            )
+                        }
+                    }
+                    entry<SelectBank> {
+                        BankTopUpScreen(
+                            bankTopUps = BankTopUp.entries,
+                            onBankClick = { selectedBank ->
+                                //TODO navigate to Top-up screen
+                            }
+                        )
+                    }
+                    entry<SelectEWallet> {
+                        Column(
+                            modifier = modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = "Select E-wallet",
+                                style = MaterialTheme.typography.headlineMedium,
+                            )
+                        }
+                    }
+                    entry<CreditCardInput> {
+                        Column(
+                            modifier = modifier.fillMaxSize(),
+                            verticalArrangement = Arrangement.Center,
+                            horizontalAlignment = Alignment.CenterHorizontally,
+                        ) {
+                            Text(
+                                text = "Credit Card Input",
                                 style = MaterialTheme.typography.headlineMedium,
                             )
                         }

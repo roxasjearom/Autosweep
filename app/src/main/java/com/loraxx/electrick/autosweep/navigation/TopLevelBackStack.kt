@@ -49,7 +49,7 @@ class TopLevelBackStack<T : Any>(startKey: T) {
         updateBackStack()
     }
 
-    fun showNavigationIcon(): Boolean {
+    fun hasMultipleItems(): Boolean {
         return (topLevelStacks[topLevelKey]?.size ?: 0) > 1
     }
 }
