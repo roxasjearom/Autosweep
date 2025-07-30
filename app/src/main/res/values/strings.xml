@@ -58,4 +58,9 @@
     <string name="e_wallet_description">Cash in from Gcash, Maya, or GrabPay</string>
     <string name="credit_card_name">Credit card</string>
     <string name="credit_card_description">Cash in using a new card</string>
+    <string name="top_up_link_bank_account">Link a bank account</string>
+    <string name="top_up_link_bank_description">You can add your bank account with any of these banks</string>
+    <string name="bank_bpi">BPI</string>
+    <string name="bank_rcbc">RCBC</string>
+    <string name="bank_ub">Union Bank</string>
 </resources>

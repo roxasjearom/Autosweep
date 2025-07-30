@@ -69,3 +69,13 @@ data object TollRate : NavKey
 
 @Serializable
 data object Help : NavKey
+
+//Top-up subscreens
+@Serializable
+data object SelectBank : NavKey
+
+@Serializable
+data object SelectEWallet : NavKey
+
+@Serializable
+data object CreditCardInput : NavKey

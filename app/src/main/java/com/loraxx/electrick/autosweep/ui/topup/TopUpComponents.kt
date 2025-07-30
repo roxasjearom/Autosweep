@@ -1,6 +1,8 @@
 package com.loraxx.electrick.autosweep.ui.topup
 
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +31,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
@@ -129,6 +132,45 @@ fun TopUpItem(
 }
 
 @Composable
+fun TopUpSourceItem(
+    modifier: Modifier = Modifier,
+    itemName: String,
+    icon: @Composable () -> Unit,
+    onClick: () -> Unit,
+) {
+    Row(
+        modifier = modifier
+            .clip(RoundedCornerShape(16.dp))
+            .clickable { onClick() }
+            .border(
+                width = 1.dp,
+                color = MaterialTheme.colorScheme.surfaceContainerHigh,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .padding(vertical = 16.dp, horizontal = 8.dp)
+            .fillMaxWidth(),
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        CircleIcon {
+            icon()
+        }
+        Spacer(modifier = Modifier.width(8.dp))
+        Text(
+            modifier = Modifier.weight(1f),
+            text = itemName,
+            style = MaterialTheme.typography.titleMedium,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+        Icon(
+            modifier = Modifier.size(16.dp),
+            imageVector = Icons.AutoMirrored.Filled.ArrowForwardIos,
+            contentDescription = itemName,
+            tint = MaterialTheme.colorScheme.primary,
+        )
+    }
+}
+
+@Composable
 fun CircleIcon(
     backgroundColor: Color = MaterialTheme.colorScheme.surface,
     circleSize: Dp = 40.dp,
@@ -145,6 +187,26 @@ fun CircleIcon(
             modifier = Modifier.size(iconSize),
         ) {
             icon()
+        }
+    }
+}
+
+@Preview
+@Composable
+fun TopUpSourceItemPreview() {
+    Autosweep20Theme {
+        Surface {
+            TopUpSourceItem(
+                itemName = "BPI",
+                icon = {
+                    Image(
+                        painter = painterResource(id = R.drawable.ic_bank_ub),
+                        contentDescription = "BPI",
+                        modifier = Modifier.size(40.dp),
+                    )
+                },
+                onClick = {},
+            )
         }
     }
 }
