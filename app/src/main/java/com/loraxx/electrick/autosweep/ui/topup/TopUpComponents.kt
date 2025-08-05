@@ -15,6 +15,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardOptions
+import androidx.compose.foundation.text.input.InputTransformation
+import androidx.compose.foundation.text.input.TextFieldLineLimits
+import androidx.compose.foundation.text.input.maxLength
+import androidx.compose.foundation.text.input.then
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.AccountBalance
@@ -22,6 +27,7 @@ import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
+import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.SheetState
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,10 +39,15 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.loraxx.electrick.autosweep.R
+import com.loraxx.electrick.autosweep.ui.fields.DigitOnlyInputTransformation
+import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
+import com.loraxx.electrick.autosweep.ui.fields.ValidationState
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -69,7 +80,7 @@ fun TopUpModalBottomSheet(
             Spacer(modifier = Modifier.height(32.dp))
 
             topUpOptions.forEach { topUpOption ->
-                TopUpItem(
+                TopUpOption(
                     imageVector = topUpOption.imageVector,
                     topUpName = stringResource(topUpOption.topUpName),
                     topUpDescription = stringResource(topUpOption.topUpDescription),
@@ -84,7 +95,7 @@ fun TopUpModalBottomSheet(
 }
 
 @Composable
-fun TopUpItem(
+fun TopUpOption(
     modifier: Modifier = Modifier,
     imageVector: ImageVector,
     topUpName: String,
@@ -191,6 +202,53 @@ fun CircleIcon(
     }
 }
 
+@Composable
+fun AmountInputTextField(
+    modifier: Modifier = Modifier,
+    amountInputFieldState: InputFieldState,
+    imeAction: ImeAction = ImeAction.Next,
+    onKeyboardActionClick: () -> Unit = { },
+) {
+    val hasError = amountInputFieldState.getValidationState() == ValidationState.INVALID
+
+    OutlinedTextField(
+        state = amountInputFieldState.textFieldState,
+        modifier = modifier,
+        lineLimits = TextFieldLineLimits.SingleLine,
+        keyboardOptions = KeyboardOptions(
+            keyboardType = KeyboardType.Number,
+            imeAction = imeAction,
+        ),
+        onKeyboardAction = { performDefaultAction ->
+            onKeyboardActionClick()
+            performDefaultAction()
+        },
+        inputTransformation = InputTransformation
+            .maxLength(10)
+            .then(DigitOnlyInputTransformation()),
+        label = { Text(stringResource(R.string.top_up_enter_amount)) },
+        placeholder = { Text(stringResource(R.string.top_up_empty_amount)) },
+        shape = RoundedCornerShape(8.dp),
+        isError = hasError,
+        supportingText = {
+            if (hasError) {
+                Text(
+                    text = when (amountInputFieldState.getValidationState()) {
+                        ValidationState.INVALID -> stringResource(R.string.top_up_amount_too_low)
+                        ValidationState.VALID, ValidationState.INITIAL -> ""
+                    },
+                    color = MaterialTheme.colorScheme.error,
+                )
+            } else {
+                Text(
+                    text = stringResource(R.string.top_up_minimum_amount),
+                    color = MaterialTheme.colorScheme.onSurface,
+                )
+            }
+        }
+    )
+}
+
 @Preview
 @Composable
 fun TopUpSourceItemPreview() {
@@ -215,7 +273,7 @@ fun TopUpSourceItemPreview() {
 @Composable
 fun TopUpItemPreview() {
     Autosweep20Theme {
-        TopUpItem(
+        TopUpOption(
             imageVector = Icons.Filled.AccountBalance,
             topUpName = "Bank account",
             topUpDescription = "Link your bank account",

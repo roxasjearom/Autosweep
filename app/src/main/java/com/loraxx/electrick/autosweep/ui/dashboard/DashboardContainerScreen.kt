@@ -30,27 +30,31 @@ import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
 import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.navigation.AccountTab
+import com.loraxx.electrick.autosweep.navigation.AmountInput
 import com.loraxx.electrick.autosweep.navigation.CalculatorTab
+import com.loraxx.electrick.autosweep.navigation.CreditCardInput
 import com.loraxx.electrick.autosweep.navigation.Help
 import com.loraxx.electrick.autosweep.navigation.HomeTab
 import com.loraxx.electrick.autosweep.navigation.Rfid
+import com.loraxx.electrick.autosweep.navigation.SelectBank
+import com.loraxx.electrick.autosweep.navigation.SelectEWallet
 import com.loraxx.electrick.autosweep.navigation.TollRate
 import com.loraxx.electrick.autosweep.navigation.TopLevelBackStack
 import com.loraxx.electrick.autosweep.navigation.TopUp
-import com.loraxx.electrick.autosweep.navigation.CreditCardInput
-import com.loraxx.electrick.autosweep.navigation.SelectBank
-import com.loraxx.electrick.autosweep.navigation.SelectEWallet
 import com.loraxx.electrick.autosweep.navigation.Traffic
 import com.loraxx.electrick.autosweep.navigation.Transaction
 import com.loraxx.electrick.autosweep.ui.topup.TopUpOption
-import com.loraxx.electrick.autosweep.ui.topup.bank.BankTopUpScreen
+import com.loraxx.electrick.autosweep.ui.topup.bank.AmountInputScreen
+import com.loraxx.electrick.autosweep.ui.topup.bank.AmountInputViewModel
 import com.loraxx.electrick.autosweep.ui.topup.bank.BankTopUp
+import com.loraxx.electrick.autosweep.ui.topup.bank.SelectBankScreen
 
 @OptIn(ExperimentalMaterial3ExpressiveApi::class, ExperimentalMaterial3Api::class)
 @Composable
@@ -241,13 +245,25 @@ fun DashboardContainerScreen(
                         }
                     }
                     entry<SelectBank> {
-                        BankTopUpScreen(
-                            bankTopUps = BankTopUp.entries,
+                        SelectBankScreen(
+                            topUpItems = BankTopUp.entries,
                             onBankClick = { selectedBank ->
-                                //TODO navigate to Top-up screen
+                                topLevelBackStack.add(AmountInput(selectedBank))
                             }
                         )
                     }
+                    entry<AmountInput> {
+                        val viewModel = hiltViewModel<AmountInputViewModel, AmountInputViewModel.Factory>(
+                            creationCallback = { factory ->
+                                factory.create(it.selectedTopUpItem)
+                            }
+                        )
+                        AmountInputScreen(
+                            selectedTopUpItem = it.selectedTopUpItem,
+                            viewModel = viewModel,
+                        )
+                    }
+
                     entry<SelectEWallet> {
                         Column(
                             modifier = modifier.fillMaxSize(),
@@ -275,38 +291,40 @@ fun DashboardContainerScreen(
                 },
             )
 
-            HorizontalFloatingToolbar(
-                expanded = true,
-                modifier = modifier
-                    .align(Alignment.BottomCenter)
-                    .height(72.dp)
-                    .padding(horizontal = 40.dp),
-                shape = RoundedCornerShape(16.dp),
-                content = {
-                    topLevelRoutes.forEach { topLevelRoute ->
-                        val isSelected = topLevelRoute == topLevelBackStack.topLevelKey
-                        NavigationBarItem(
-                            icon = {
-                                Icon(
-                                    imageVector = topLevelRoute.getIcon(isSelected),
-                                    contentDescription = stringResource(topLevelRoute.nameId)
-                                )
-                            },
-                            label = {
-                                Text(
-                                    text = stringResource(topLevelRoute.nameId),
-                                    fontWeight = FontWeight.Medium,
-                                    style = MaterialTheme.typography.labelMedium,
-                                )
-                            },
-                            selected = isSelected,
-                            onClick = {
-                                topLevelBackStack.addTopLevel(topLevelRoute)
-                            }
-                        )
-                    }
-                },
-            )
+            if (!topLevelBackStack.hasMultipleItems()) {
+                HorizontalFloatingToolbar(
+                    expanded = true,
+                    modifier = modifier
+                        .align(Alignment.BottomCenter)
+                        .height(72.dp)
+                        .padding(horizontal = 40.dp),
+                    shape = RoundedCornerShape(16.dp),
+                    content = {
+                        topLevelRoutes.forEach { topLevelRoute ->
+                            val isSelected = topLevelRoute == topLevelBackStack.topLevelKey
+                            NavigationBarItem(
+                                icon = {
+                                    Icon(
+                                        imageVector = topLevelRoute.getIcon(isSelected),
+                                        contentDescription = stringResource(topLevelRoute.nameId)
+                                    )
+                                },
+                                label = {
+                                    Text(
+                                        text = stringResource(topLevelRoute.nameId),
+                                        fontWeight = FontWeight.Medium,
+                                        style = MaterialTheme.typography.labelMedium,
+                                    )
+                                },
+                                selected = isSelected,
+                                onClick = {
+                                    topLevelBackStack.addTopLevel(topLevelRoute)
+                                }
+                            )
+                        }
+                    },
+                )
+            }
         }
     }
 }

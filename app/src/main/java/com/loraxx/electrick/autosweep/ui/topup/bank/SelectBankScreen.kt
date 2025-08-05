@@ -18,13 +18,14 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
+import com.loraxx.electrick.autosweep.ui.topup.TopUpItem
 import com.loraxx.electrick.autosweep.ui.topup.TopUpSourceItem
 
 @Composable
-fun BankTopUpScreen(
+fun SelectBankScreen(
     modifier: Modifier = Modifier,
-    bankTopUps: List<BankTopUp>,
-    onBankClick: (BankTopUp) -> Unit,
+    topUpItems: List<TopUpItem>,
+    onBankClick: (TopUpItem) -> Unit,
 ) {
     Column(modifier = modifier
         .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -45,18 +46,18 @@ fun BankTopUpScreen(
 
         Spacer(modifier = Modifier.height(24.dp))
 
-        bankTopUps.forEach { topUpBank ->
+        topUpItems.forEach { topUpItem ->
             TopUpSourceItem(
-                itemName = stringResource(topUpBank.bankName),
+                itemName = stringResource(topUpItem.topUpName),
                 icon = {
                     Image(
-                        painter = painterResource(id = topUpBank.bankLogo),
-                        contentDescription = topUpBank.name,
+                        painter = painterResource(id = topUpItem.topUpLogo),
+                        contentDescription = stringResource(topUpItem.topUpName),
                         modifier = Modifier.size(40.dp),
                     )
                 },
                 onClick = {
-                    onBankClick(topUpBank)
+                    onBankClick(topUpItem)
                 }
             )
             Spacer(modifier = Modifier.height(4.dp))
@@ -69,8 +70,8 @@ fun BankTopUpScreen(
 fun BankTopUpScreenPreview() {
     Autosweep20Theme {
         Surface {
-            BankTopUpScreen(
-                bankTopUps = listOf(BankTopUp.BPI, BankTopUp.RCBC, BankTopUp.UB),
+            SelectBankScreen(
+                topUpItems = listOf(BankTopUp.BPI, BankTopUp.RCBC, BankTopUp.UB),
                 onBankClick = {},
             )
         }

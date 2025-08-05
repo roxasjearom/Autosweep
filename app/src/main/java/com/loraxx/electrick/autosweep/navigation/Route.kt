@@ -10,6 +10,7 @@ import androidx.compose.material.icons.outlined.Person
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.navigation3.runtime.NavKey
 import com.loraxx.electrick.autosweep.R
+import com.loraxx.electrick.autosweep.ui.topup.TopUpItem
 import kotlinx.serialization.Serializable
 
 sealed interface TopLevelRoute {
@@ -79,3 +80,6 @@ data object SelectEWallet : NavKey
 
 @Serializable
 data object CreditCardInput : NavKey
+
+@Serializable
+data class AmountInput(val selectedTopUpItem: TopUpItem) : NavKey

@@ -54,3 +54,12 @@ val plateNumberStateValidator: StateValidator = { plateNumber ->
         else -> ValidationState.INVALID
     }
 }
+
+val topUpAmountValidator: StateValidator = { amount ->
+    when {
+        amount.isEmpty() -> ValidationState.INITIAL
+        !amount.all { it.isDigit() } -> ValidationState.INVALID
+        amount.all { it.isDigit() } && amount.toInt() >= 50 -> ValidationState.VALID
+        else -> ValidationState.INVALID
+    }
+}
