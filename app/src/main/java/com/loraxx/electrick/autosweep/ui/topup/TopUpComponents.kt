@@ -23,7 +23,11 @@ import androidx.compose.foundation.text.input.then
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowForwardIos
 import androidx.compose.material.icons.filled.AccountBalance
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExperimentalMaterial3ExpressiveApi
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.ModalBottomSheet
@@ -49,6 +53,7 @@ import com.loraxx.electrick.autosweep.ui.fields.DigitOnlyInputTransformation
 import com.loraxx.electrick.autosweep.ui.fields.InputFieldState
 import com.loraxx.electrick.autosweep.ui.fields.ValidationState
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
+import com.loraxx.electrick.autosweep.utils.toPhilippinePeso
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -91,6 +96,120 @@ fun TopUpModalBottomSheet(
                 Spacer(modifier = Modifier.height(8.dp))
             }
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun ConfirmTransactionBottomSheet(
+    modifier: Modifier = Modifier,
+    amount: Double,
+    selectedTopUp: String,
+    transactionFee: Double,
+    sheetState: SheetState,
+    onConfirmClick: () -> Unit,
+    onDismissRequest: () -> Unit,
+) {
+    ModalBottomSheet(
+        modifier = modifier,
+        onDismissRequest = onDismissRequest,
+        sheetState = sheetState,
+        dragHandle = null,
+    ) {
+        ConfirmTransaction(
+            modifier = modifier,
+            amount = amount,
+            selectedTopUp = selectedTopUp,
+            transactionFee = transactionFee,
+            onConfirmClick = onConfirmClick,
+        )
+    }
+}
+
+@OptIn(ExperimentalMaterial3ExpressiveApi::class)
+@Composable
+fun ConfirmTransaction(
+    modifier: Modifier = Modifier,
+    amount: Double,
+    selectedTopUp: String,
+    transactionFee: Double,
+    onConfirmClick: () -> Unit,
+) {
+    Column(
+        modifier = modifier
+            .padding(horizontal = 16.dp)
+            .fillMaxWidth()
+    ) {
+        Spacer(modifier = Modifier.height(48.dp))
+        Text(
+            text = stringResource(R.string.top_up_confirm_transaction),
+            style = MaterialTheme.typography.titleLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = amount.toPhilippinePeso(),
+            style = MaterialTheme.typography.headlineLarge,
+            color = MaterialTheme.colorScheme.primary,
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        LabeledItem(
+            label = stringResource(R.string.label_from),
+            value = selectedTopUp,
+        )
+
+        HorizontalDivider()
+
+        LabeledItem(
+            label = stringResource(R.string.label_transaction_fee),
+            value = transactionFee.toPhilippinePeso(),
+        )
+
+        HorizontalDivider()
+
+        LabeledItem(
+            label = stringResource(R.string.label_total),
+            value = (amount + transactionFee).toPhilippinePeso(),
+        )
+
+        Spacer(modifier = Modifier.height(16.dp))
+
+        Button(
+            modifier = Modifier
+                .padding(vertical = 16.dp)
+                .fillMaxWidth(),
+            contentPadding = ButtonDefaults.contentPaddingFor(ButtonDefaults.MediumContainerHeight),
+            shape = ButtonDefaults.squareShape,
+            onClick = onConfirmClick,
+        ) {
+            Text(
+                stringResource(R.string.button_confirm),
+                style = MaterialTheme.typography.labelLarge,
+            )
+        }
+    }
+}
+
+@Composable
+fun LabeledItem(modifier: Modifier = Modifier, label: String, value: String) {
+    Row(modifier = modifier.padding(vertical = 16.dp)) {
+        Text(
+            text = label,
+            style = MaterialTheme.typography.labelMedium,
+            color = MaterialTheme.colorScheme.outline,
+            modifier = Modifier.weight(1f),
+        )
+
+        Text(
+            text = value,
+            style = MaterialTheme.typography.labelLarge,
+            color = MaterialTheme.colorScheme.onSurface,
+            modifier = Modifier.weight(1f),
+        )
     }
 }
 
@@ -143,7 +262,7 @@ fun TopUpOption(
 }
 
 @Composable
-fun TopUpSourceItem(
+fun TopUpItem(
     modifier: Modifier = Modifier,
     itemName: String,
     icon: @Composable () -> Unit,
@@ -251,10 +370,25 @@ fun AmountInputTextField(
 
 @Preview
 @Composable
-fun TopUpSourceItemPreview() {
+fun ConfirmTransactionPreview() {
     Autosweep20Theme {
         Surface {
-            TopUpSourceItem(
+            ConfirmTransaction(
+                amount = 500.0,
+                selectedTopUp = "BPI",
+                transactionFee = 5.0,
+                onConfirmClick = {},
+            )
+        }
+    }
+}
+
+@Preview
+@Composable
+fun TopUpItemPreview() {
+    Autosweep20Theme {
+        Surface {
+            TopUpItem(
                 itemName = "BPI",
                 icon = {
                     Image(
@@ -271,7 +405,7 @@ fun TopUpSourceItemPreview() {
 
 @Preview
 @Composable
-fun TopUpItemPreview() {
+fun TopUpOptionPreview() {
     Autosweep20Theme {
         TopUpOption(
             imageVector = Icons.Filled.AccountBalance,

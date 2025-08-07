@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.dp
 import com.loraxx.electrick.autosweep.R
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 import com.loraxx.electrick.autosweep.ui.topup.TopUpItem
-import com.loraxx.electrick.autosweep.ui.topup.TopUpSourceItem
 
 @Composable
 fun SelectBankScreen(
@@ -47,7 +46,7 @@ fun SelectBankScreen(
         Spacer(modifier = Modifier.height(24.dp))
 
         topUpItems.forEach { topUpItem ->
-            TopUpSourceItem(
+            TopUpItem(
                 itemName = stringResource(topUpItem.topUpName),
                 icon = {
                     Image(
