@@ -21,4 +21,8 @@ class AmountInputViewModel @AssistedInject constructor(
     interface Factory {
         fun create(selectedBank: TopUpItem): AmountInputViewModel
     }
+
+    fun submitTransaction() {
+        //Submit transaction details
+    }
 }
