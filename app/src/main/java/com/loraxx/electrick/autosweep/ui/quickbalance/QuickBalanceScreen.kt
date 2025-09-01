@@ -37,7 +37,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -70,7 +70,7 @@ fun QuickBalanceScreen(
         navigateBack = navigateBack,
     )
 
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog by rememberSaveable { mutableStateOf(false) }
 
     LaunchedEffect(uiState.showInvalidAccountError) {
         if (uiState.showInvalidAccountError) {
@@ -226,7 +226,7 @@ fun AccountBalanceSection(modifier: Modifier = Modifier, accountBalance: Double)
 
 @Preview
 @Composable
-fun QuickBalancePreview(modifier: Modifier = Modifier) {
+fun QuickBalancePreview() {
     Autosweep20Theme {
         QuickBalanceScreen(
             accountBalance = 1200.0,

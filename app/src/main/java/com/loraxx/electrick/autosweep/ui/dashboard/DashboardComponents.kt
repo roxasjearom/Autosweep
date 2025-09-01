@@ -42,7 +42,7 @@ import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,7 +75,7 @@ fun AccountBalanceList(
     onTransactionClick: (AccountDetails) -> Unit,
 ) {
     val firstAccount = accountDetailsList.first()
-    var expandedAccountNumber by remember { mutableStateOf<Int?>(firstAccount.accountNumber) }
+    var expandedAccountNumber by rememberSaveable { mutableStateOf<Int?>(firstAccount.accountNumber) }
     Column(modifier = modifier.fillMaxWidth()) {
         accountDetailsList.forEachIndexed { index, accountDetails ->
             val isExpanded = accountDetails.accountNumber == expandedAccountNumber

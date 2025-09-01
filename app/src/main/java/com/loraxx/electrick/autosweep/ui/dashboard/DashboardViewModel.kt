@@ -2,7 +2,10 @@ package com.loraxx.electrick.autosweep.ui.dashboard
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.navigation3.runtime.NavKey
 import com.loraxx.electrick.autosweep.domain.repository.DashboardRepository
+import com.loraxx.electrick.autosweep.navigation.HomeTab
+import com.loraxx.electrick.autosweep.navigation.TopLevelBackStack
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -18,6 +21,8 @@ class DashboardViewModel @Inject constructor(
 
     private val _uiState = MutableStateFlow(DashboardUiState())
     val uiState: StateFlow<DashboardUiState> = _uiState.asStateFlow()
+
+    val topLevelBackStack = TopLevelBackStack<NavKey>(HomeTab)
 
     init {
         fetchBalanceDetails()

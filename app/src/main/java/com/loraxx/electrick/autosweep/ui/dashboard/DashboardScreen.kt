@@ -18,8 +18,8 @@ import androidx.compose.material3.rememberModalBottomSheetState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -75,7 +75,7 @@ fun DashboardScreen(
     val state = rememberPullToRefreshState()
     val sheetState = rememberModalBottomSheetState()
     val scope = rememberCoroutineScope()
-    var showTopUpBottomSheet by remember { mutableStateOf(false) }
+    var showTopUpBottomSheet by rememberSaveable { mutableStateOf(false) }
 
     PullToRefreshBox(
         modifier = modifier,
