@@ -26,7 +26,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.loraxx.electrick.autosweep.domain.model.BalanceDetails
+import com.loraxx.electrick.autosweep.domain.model.AccountDetails
 import com.loraxx.electrick.autosweep.domain.model.NewsItem
 import com.loraxx.electrick.autosweep.domain.model.TrafficAdvisory
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
@@ -39,14 +39,14 @@ fun DashboardScreen(
     modifier: Modifier = Modifier,
     viewModel: DashboardViewModel,
     onTopUpOptionClick: (TopUpOption) -> Unit,
-    onTransactionClick: () -> Unit,
+    onTransactionClick: (accountDetails: AccountDetails) -> Unit,
     onActionBeltItemClick: (ActionBeltItem) -> Unit,
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     DashboardScreen(
         modifier = modifier,
         isRefreshing = uiState.isLoading,
-        balanceDetails = uiState.balanceDetails,
+        accountDetailsList = uiState.accountDetailsList,
         trafficAdvisory = uiState.trafficAdvisory,
         newsItems = uiState.newsItems,
         onTopUpOptionClick = onTopUpOptionClick,
@@ -64,11 +64,11 @@ fun DashboardScreen(
 fun DashboardScreen(
     modifier: Modifier = Modifier,
     isRefreshing: Boolean,
-    balanceDetails: BalanceDetails,
+    accountDetailsList: List<AccountDetails>,
     trafficAdvisory: TrafficAdvisory,
     newsItems: List<NewsItem>,
     onTopUpOptionClick: (TopUpOption) -> Unit,
-    onTransactionClick: () -> Unit,
+    onTransactionClick: (accountDetails: AccountDetails) -> Unit,
     onRefresh: () -> Unit,
     onActionBeltItemClick: (ActionBeltItem) -> Unit,
 ) {
@@ -95,13 +95,23 @@ fun DashboardScreen(
                 .padding(horizontal = 16.dp)
                 .verticalScroll(rememberScrollState()),
         ) {
-            AccountBalanceSection(
-                balanceDetails = balanceDetails,
-                onTopUpClick = {
-                    showTopUpBottomSheet = true
-                },
-                onTransactionClick = onTransactionClick,
-            )
+            if (isRefreshing) {
+                ExpandableAccountBalanceCard(
+                    accountDetails = AccountDetails(0, "-"),
+                    isExpanded = true,
+                    onTopUpClick = {},
+                    onTransactionClick = {},
+                    onCardClick = {},
+                )
+            } else {
+                AccountBalanceList(
+                    accountDetailsList = accountDetailsList,
+                    onTopUpClick = {
+                        showTopUpBottomSheet = true
+                    },
+                    onTransactionClick = onTransactionClick,
+                )
+            }
 
             Spacer(modifier = Modifier.height(16.dp))
 
@@ -155,10 +165,12 @@ fun DashboardScreen(
 fun DashboardScreenPreview() {
     Autosweep20Theme {
         DashboardScreen(
-            balanceDetails = BalanceDetails(
-                plateNumber = "JCR 0623",
-                accountNumber = "123456789",
-                accountBalance = 1200.0
+            accountDetailsList = listOf(
+                AccountDetails(
+                    plateNumber = "JCR 0623",
+                    accountNumber = 1234567,
+                    accountBalance = 1200.0,
+                )
             ),
             trafficAdvisory = TrafficAdvisory(true, "Traffic advisory message"),
             newsItems = listOf(
