@@ -1,8 +1,18 @@
 package com.loraxx.electrick.autosweep.ui.dashboard
 
 import androidx.annotation.DrawableRes
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.AnimatedVisibilityScope
+import androidx.compose.animation.ExperimentalAnimationApi
+import androidx.compose.animation.ExperimentalSharedTransitionApi
+import androidx.compose.animation.SharedTransitionLayout
+import androidx.compose.animation.SharedTransitionScope
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.shrinkVertically
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -30,6 +40,10 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.carousel.HorizontalMultiBrowseCarousel
 import androidx.compose.material3.carousel.rememberCarouselState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -39,6 +53,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,17 +62,94 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.loraxx.electrick.autosweep.R
-import com.loraxx.electrick.autosweep.domain.model.BalanceDetails
+import com.loraxx.electrick.autosweep.domain.model.AccountDetails
 import com.loraxx.electrick.autosweep.domain.model.NewsItem
 import com.loraxx.electrick.autosweep.ui.theme.Autosweep20Theme
 import com.loraxx.electrick.autosweep.utils.toPhilippinePeso
 
 @Composable
-fun AccountBalanceSection(
+fun AccountBalanceList(
     modifier: Modifier = Modifier,
-    balanceDetails: BalanceDetails,
-    onTopUpClick: () -> Unit,
-    onTransactionClick: () -> Unit,
+    accountDetailsList: List<AccountDetails>,
+    onTopUpClick: (AccountDetails) -> Unit,
+    onTransactionClick: (AccountDetails) -> Unit,
+) {
+    val firstAccount = accountDetailsList.first()
+    var expandedAccountNumber by remember { mutableStateOf<Int?>(firstAccount.accountNumber) }
+    Column(modifier = modifier.fillMaxWidth()) {
+        accountDetailsList.forEachIndexed { index, accountDetails ->
+            val isExpanded = accountDetails.accountNumber == expandedAccountNumber
+            ExpandableAccountBalanceCard(
+                accountDetails = accountDetails,
+                isExpanded = isExpanded,
+                onCardClick = {
+                    expandedAccountNumber = if (isExpanded) null else accountDetails.accountNumber
+                },
+                onTopUpClick = { onTopUpClick(accountDetails) },
+                onTransactionClick = { onTransactionClick(accountDetails) }
+            )
+            if (index < accountDetailsList.size - 1) {
+                Spacer(modifier = Modifier.height(8.dp))
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalAnimationApi::class, ExperimentalSharedTransitionApi::class)
+@Composable
+fun ExpandableAccountBalanceCard(
+    modifier: Modifier = Modifier,
+    accountDetails: AccountDetails,
+    isExpanded: Boolean = false,
+    onTopUpClick: (accountDetails: AccountDetails) -> Unit,
+    onTransactionClick: (accountDetails: AccountDetails) -> Unit,
+    onCardClick: (accountDetails: AccountDetails) -> Unit,
+) {
+    SharedTransitionLayout {
+        AnimatedContent(
+            targetState = isExpanded,
+            transitionSpec = {
+                (expandVertically(expandFrom = Alignment.Top))
+                    .togetherWith(shrinkVertically(shrinkTowards = Alignment.Top))
+            },
+            label = "AccountBalanceAnimation"
+        ) { targetExpanded ->
+            Box(
+                modifier = modifier
+                    .fillMaxWidth()
+                    .clickable {
+                        onCardClick(accountDetails)
+                    }
+            ) {
+                if (targetExpanded) {
+                    AccountBalanceExpanded(
+                        accountDetails = accountDetails,
+                        onTopUpClick = onTopUpClick,
+                        onTransactionClick = onTransactionClick,
+                        animatedVisibilityScope = this@AnimatedContent,
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                    )
+                } else {
+                    AccountBalanceMinimized(
+                        accountDetails = accountDetails,
+                        animatedVisibilityScope = this@AnimatedContent,
+                        sharedTransitionScope = this@SharedTransitionLayout,
+                    )
+                }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun AccountBalanceExpanded(
+    modifier: Modifier = Modifier,
+    accountDetails: AccountDetails,
+    onTopUpClick: (accountDetails: AccountDetails) -> Unit,
+    onTransactionClick: (accountDetails: AccountDetails) -> Unit,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
 ) {
     Column(
         modifier = modifier
@@ -66,51 +158,99 @@ fun AccountBalanceSection(
             .background(MaterialTheme.colorScheme.primaryContainer)
             .padding(16.dp)
     ) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically
-        ) {
+        with(sharedTransitionScope) {
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                TextWithIcon(
+                    text = accountDetails.plateNumber,
+                    iconId = R.drawable.ic_car,
+                    modifier = Modifier.clip(RoundedCornerShape(4.dp)),
+                )
+
+                Text(
+                    text = accountDetails.accountNumber.toString(),
+                    style = MaterialTheme.typography.titleSmall,
+                    color = MaterialTheme.colorScheme.onPrimary,
+                )
+            }
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            Text(
+                text = accountDetails.accountBalance.toPhilippinePeso(),
+                modifier = Modifier.sharedElement(
+                    sharedContentState = rememberSharedContentState(key = "accountBalanceText"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
+                style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Normal),
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+            Text(
+                text = stringResource(R.string.account_balance),
+                style = MaterialTheme.typography.labelMedium,
+                color = MaterialTheme.colorScheme.onPrimary,
+            )
+
+            Spacer(modifier = Modifier.height(16.dp))
+
+            TopUpSection(onTopUpClick = {
+                onTopUpClick(accountDetails)
+            }, onTransactionClick = {
+                onTransactionClick(accountDetails)
+            })
+        }
+    }
+}
+
+@OptIn(ExperimentalSharedTransitionApi::class)
+@Composable
+fun AccountBalanceMinimized(
+    modifier: Modifier = Modifier,
+    accountDetails: AccountDetails,
+    sharedTransitionScope: SharedTransitionScope,
+    animatedVisibilityScope: AnimatedVisibilityScope,
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(20.dp))
+            .background(MaterialTheme.colorScheme.primaryContainer)
+            .padding(16.dp),
+        horizontalArrangement = Arrangement.SpaceBetween,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        with(sharedTransitionScope) {
             TextWithIcon(
-                text = balanceDetails.plateNumber,
+                text = accountDetails.plateNumber,
                 iconId = R.drawable.ic_car,
                 modifier = Modifier.clip(RoundedCornerShape(4.dp)),
             )
 
             Text(
-                text = balanceDetails.accountNumber,
-                style = MaterialTheme.typography.titleSmall,
+                text = accountDetails.accountBalance.toPhilippinePeso(),
+                modifier = Modifier.sharedElement(
+                    sharedContentState = rememberSharedContentState(key = "accountBalanceText"),
+                    animatedVisibilityScope = animatedVisibilityScope,
+                ),
+                style = MaterialTheme.typography.bodyMedium,
                 color = MaterialTheme.colorScheme.onPrimary,
             )
         }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        Text(
-            text = balanceDetails.accountBalance.toPhilippinePeso(),
-            style = MaterialTheme.typography.displayMedium.copy(fontWeight = FontWeight.Normal),
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-        Text(
-            text = stringResource(R.string.account_balance),
-            style = MaterialTheme.typography.labelMedium,
-            color = MaterialTheme.colorScheme.onPrimary,
-        )
-
-        Spacer(modifier = Modifier.height(16.dp))
-
-        TopUpSection(onTopUpClick = onTopUpClick, onTransactionClick = onTransactionClick)
     }
 }
 
 @Composable
 fun TextWithIcon(
     text: String,
-    @DrawableRes iconId: Int,
     modifier: Modifier = Modifier,
+    @DrawableRes iconId: Int,
     iconSize: Dp = 16.dp,
     containerColor: Color = MaterialTheme.colorScheme.tertiaryFixed,
     contentColor: Color = MaterialTheme.colorScheme.onTertiaryFixed,
+    textStyle: TextStyle = MaterialTheme.typography.titleSmall,
 ) {
     Row(
         modifier = modifier
@@ -127,7 +267,7 @@ fun TextWithIcon(
         Spacer(Modifier.width(2.dp))
         Text(
             text = text,
-            style = MaterialTheme.typography.titleSmall,
+            style = textStyle,
             color = contentColor,
         )
     }
@@ -314,18 +454,20 @@ fun NewsAndUpdateSection(modifier: Modifier = Modifier, newsItems: List<NewsItem
     }
 }
 
+@OptIn(ExperimentalSharedTransitionApi::class)
 @Preview
 @Composable
 fun AccountBalanceSectionPreview() {
     Autosweep20Theme {
-        AccountBalanceSection(
-            balanceDetails = BalanceDetails(
+        ExpandableAccountBalanceCard(
+            accountDetails = AccountDetails(
                 plateNumber = "JCR 0623",
-                accountNumber = "123456789",
+                accountNumber = 1234567,
                 accountBalance = 1200.0
             ),
             onTopUpClick = {},
             onTransactionClick = {},
+            onCardClick = {},
         )
     }
 }
