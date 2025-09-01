@@ -39,7 +39,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -74,7 +74,7 @@ fun LoginScreen(
 ) {
     val loginUiState by loginViewModel.loginUiState.collectAsStateWithLifecycle()
     val registrationUiState by loginViewModel.registrationUiState.collectAsStateWithLifecycle()
-    var showDialog by remember { mutableStateOf(false) }
+    var showDialog by rememberSaveable { mutableStateOf(false) }
 
     val context = LocalContext.current
 
@@ -345,7 +345,7 @@ fun LoginButtonGroup(
 
 @Preview
 @Composable
-fun LoginScreenPreview(modifier: Modifier = Modifier) {
+fun LoginScreenPreview() {
     Autosweep20Theme {
         Surface {
             LoginScreen(

@@ -22,7 +22,6 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.material3.TopAppBarDefaults
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.input.nestedscroll.nestedScroll
@@ -31,7 +30,6 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.navigation3.runtime.NavKey
 import androidx.navigation3.runtime.entry
 import androidx.navigation3.runtime.entryProvider
 import androidx.navigation3.ui.NavDisplay
@@ -46,7 +44,6 @@ import com.loraxx.electrick.autosweep.navigation.Rfid
 import com.loraxx.electrick.autosweep.navigation.SelectBank
 import com.loraxx.electrick.autosweep.navigation.SelectEWallet
 import com.loraxx.electrick.autosweep.navigation.TollRate
-import com.loraxx.electrick.autosweep.navigation.TopLevelBackStack
 import com.loraxx.electrick.autosweep.navigation.TopUp
 import com.loraxx.electrick.autosweep.navigation.Traffic
 import com.loraxx.electrick.autosweep.navigation.Transaction
@@ -63,7 +60,7 @@ fun DashboardContainerScreen(
     viewModel: DashboardViewModel,
 ) {
     val topLevelRoutes = listOf(HomeTab, CalculatorTab, AccountTab)
-    val topLevelBackStack = remember { TopLevelBackStack<NavKey>(HomeTab) }
+    val topLevelBackStack = viewModel.topLevelBackStack
     val scrollBehavior = TopAppBarDefaults.enterAlwaysScrollBehavior()
 
     Scaffold(
